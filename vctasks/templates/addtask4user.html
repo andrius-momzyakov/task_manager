@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Создать заявку {% endblock %}
+{% block content %}
+    <h2>Ввод заявки: cтраница 1 из 2</h2>
+    {% if form.is_multipart %}
+      <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
+    {% else %}
+      <form method="post" action="">{% csrf_token %}
+    {% endif %}
+    <table>
+    {% for field in form%}
+    <tr>
+    <td>{{ field.label_tag }}</td><td>{{ field }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <input type="submit" value="Далее" />
+    <input type="reset" value="Сбросить" />
+    </form>
+{% endblock %}

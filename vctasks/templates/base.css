@@ -1,0 +1,29 @@
+/* CSS Document */
+
+ul.errorlist {
+  margin: 0;
+  padding: 0;
+}
+.errorlist li {
+  background-color: white;
+  color: red;
+  display: block;
+  font-size: 14px;
+  margin: 0 0 3px;
+  padding: 4px 5px;
+}
+.sidebar {
+  top: 20px;
+  left: 20px;
+  /*right: 200px;*/
+  float: left;
+  width: 20%;  
+  background-color: #F0F8FF
+  border: 1px
+}
+.content {
+  /*top: 20px;
+  left: 200px; */
+  float:left;
+  width: 80%
+}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Назначить заявку {{ task_id }}{% endblock %}
+{% block content %}
+    <h2>Назначение заявки {{ task_id }}</h2>
+    {% if docs %}
+    <table>
+    <tr>
+    <td>Прикреплённые файлы:</td>
+    <td>
+    {% for file in docs %}
+    <p><a href="/file/?fname={{ file.file }}">{{ file.file }}</a></p>
+    {% endfor %}
+    </td>
+    </tr>
+    </table>
+    {% endif %}
+    {% if form.is_multipart %}
+      <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
+    {% else %}
+      <form method="post" action="">{% csrf_token %}
+    {% endif %}
+    <table>
+    {% for field in form%}
+    <tr>
+    <td>{{ field.label_tag }}</td><td>{{ field }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <input type="submit" value="Сохранить" />
+    <input type="reset" value="Сбросить" />
+    </form>
+{% endblock %}

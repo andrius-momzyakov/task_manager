@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="PSPad editor, www.pspad.com">
+  <title>{% block title %}Учёт задач СИТ - Главная {% endblock %}</title>
+  <LINK rel="stylesheet" href="/static/base.css" type="text/css">
+  </head>
+  <body>
+    <div class="header">
+    {% block header %}
+        <div style="text-align:center;width:50%;float:left;">Сегодня: {{ curdate }}</div>
+        <div style="text-align:center;width:50%;float:left;">Вы зашли как: {{ user.get_full_name }}</div>
+    {% endblock %}
+    </div>
+<div class="sidebar">
+    {% block menu %}
+      <h3>Служба HelpDesk СИТ</h3>
+      <button class="sidemenubutton" onclick="parent.location='/home/'">Домашняя</button><br>
+      <button class="sidemenubutton" onclick="parent.location='/addtask/'">Добавить заявку</button><br>
+      <button class="sidemenubutton" onclick="parent.location='/tasklist/'">Список заявок</button><br>
+      {% if user.is_superuser %}
+      <button class="sidemenubutton" onclick="parent.location='/admin/'">Администрирование</button><br>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <button class="sidemenubutton" onclick="parent.location='/accounts/logout/'">Выйти</button><br>
+            <p></p>
+        <form action='/findtask/' method='post'>{% csrf_token %}
+          <label for="id">Найти заявку № <br /></label>
+          <input style="width:80%" type="text" name="id" value="" id="id"><br />
+          <input type="submit" value="Искать" />
+        </form>
+      {% else %}
+            <p></p>
+        {% if form.errors %}
+          <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+        {% endif %}
+        <form action='/home/' method='post'>{% csrf_token %}
+          <label for="username">Логин:<br /></label>
+          <input style="width:80%" type="text" name="username" value="" id="username"><br />
+          <label for="password">Пароль:<br /></label>
+          <input style="width:80%" type="password" name="password" value="" id="password"><br />
+          <input type="submit" value="Вход" />
+        </form>
+      {% endif %}
+    {% endblock %}
+</div>
+    <div class="content">
+    {% block content%}{% endblock %}
+    </div>
+  </body>
+</html>

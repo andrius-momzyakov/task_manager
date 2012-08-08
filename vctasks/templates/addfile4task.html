@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить файлы{% endblock %}
+{% block content %}
+    <h2>Ввод заявки: cтраница 2 из 2</h2>
+    {% for d in docs %}
+      <P>Прикреплено: {{ d.file }} <a href="/deletefile/{{ task_id }}/{{ d.id }}/">Открепить</a></p>
+    {% endfor %}
+    {% if form.is_multipart %}
+      <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
+    {% else %}
+      <form method="post" action="">{% csrf_token %}
+    {% endif %}
+    <table>
+    {% for field in form%}
+    <tr>
+    <td>{{ field.label_tag }}</td><td>{{ field }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <input type="button" value="<< Назад" onclick="parent.location='/addtask/{{ task_id }}/'"/>
+    <input type="submit" value="Далее >>" />
+    <input type="reset" value="Сбросить" />
+    </form>
+{% endblock %}

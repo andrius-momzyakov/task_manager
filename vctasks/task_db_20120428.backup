@@ -1,0 +1,2183 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.1.3
+-- Dumped by pg_dump version 9.1.3
+-- Started on 2012-04-28 15:59:16
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 196 (class 3079 OID 11639)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2099 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 187 (class 1259 OID 16743)
+-- Dependencies: 5
+-- Name: addtask_doc; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_doc (
+    id integer NOT NULL,
+    direction character varying(1) NOT NULL,
+    reg_tag character varying(30),
+    reg_date date NOT NULL,
+    ext_reg_tag character varying(30),
+    ext_reg_date date,
+    file character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.addtask_doc OWNER TO postgres;
+
+--
+-- TOC entry 186 (class 1259 OID 16741)
+-- Dependencies: 187 5
+-- Name: addtask_doc_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_doc_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_doc_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2100 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: addtask_doc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_doc_id_seq OWNED BY addtask_doc.id;
+
+
+--
+-- TOC entry 2101 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: addtask_doc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_doc_id_seq', 6, true);
+
+
+--
+-- TOC entry 193 (class 1259 OID 16802)
+-- Dependencies: 5
+-- Name: addtask_message; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_message (
+    id integer NOT NULL,
+    ordnum integer NOT NULL,
+    body character varying(4000) NOT NULL,
+    dbuser character varying(30) NOT NULL,
+    task_id integer NOT NULL,
+    type character varying(1) NOT NULL
+);
+
+
+ALTER TABLE public.addtask_message OWNER TO postgres;
+
+--
+-- TOC entry 192 (class 1259 OID 16800)
+-- Dependencies: 193 5
+-- Name: addtask_message_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_message_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_message_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2102 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: addtask_message_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_message_id_seq OWNED BY addtask_message.id;
+
+
+--
+-- TOC entry 2103 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: addtask_message_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_message_id_seq', 1, false);
+
+
+--
+-- TOC entry 191 (class 1259 OID 16776)
+-- Dependencies: 5
+-- Name: addtask_module; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_module (
+    id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    code character varying(30) NOT NULL,
+    status character varying(1) NOT NULL,
+    comment text,
+    parent_id integer,
+    proj character varying(100),
+    exe character varying(100)
+);
+
+
+ALTER TABLE public.addtask_module OWNER TO postgres;
+
+--
+-- TOC entry 189 (class 1259 OID 16761)
+-- Dependencies: 5
+-- Name: addtask_module_dev; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_module_dev (
+    id integer NOT NULL,
+    module_id integer NOT NULL,
+    person_id integer NOT NULL
+);
+
+
+ALTER TABLE public.addtask_module_dev OWNER TO postgres;
+
+--
+-- TOC entry 188 (class 1259 OID 16759)
+-- Dependencies: 5 189
+-- Name: addtask_module_dev_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_module_dev_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_module_dev_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2104 (class 0 OID 0)
+-- Dependencies: 188
+-- Name: addtask_module_dev_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_module_dev_id_seq OWNED BY addtask_module_dev.id;
+
+
+--
+-- TOC entry 2105 (class 0 OID 0)
+-- Dependencies: 188
+-- Name: addtask_module_dev_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_module_dev_id_seq', 15, true);
+
+
+--
+-- TOC entry 190 (class 1259 OID 16774)
+-- Dependencies: 5 191
+-- Name: addtask_module_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_module_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_module_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2106 (class 0 OID 0)
+-- Dependencies: 190
+-- Name: addtask_module_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_module_id_seq OWNED BY addtask_module.id;
+
+
+--
+-- TOC entry 2107 (class 0 OID 0)
+-- Dependencies: 190
+-- Name: addtask_module_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_module_id_seq', 9, true);
+
+
+--
+-- TOC entry 179 (class 1259 OID 16672)
+-- Dependencies: 5
+-- Name: addtask_person; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_person (
+    id integer NOT NULL,
+    second_name character varying(30),
+    "position" character varying(50) NOT NULL,
+    login character varying(30) NOT NULL,
+    location character varying(30),
+    phone character varying(30) NOT NULL
+);
+
+
+ALTER TABLE public.addtask_person OWNER TO postgres;
+
+--
+-- TOC entry 178 (class 1259 OID 16670)
+-- Dependencies: 179 5
+-- Name: addtask_person_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_person_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_person_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2108 (class 0 OID 0)
+-- Dependencies: 178
+-- Name: addtask_person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_person_id_seq OWNED BY addtask_person.id;
+
+
+--
+-- TOC entry 2109 (class 0 OID 0)
+-- Dependencies: 178
+-- Name: addtask_person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_person_id_seq', 5, true);
+
+
+--
+-- TOC entry 185 (class 1259 OID 16702)
+-- Dependencies: 5
+-- Name: addtask_task; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_task (
+    id integer NOT NULL,
+    name character varying(240) NOT NULL,
+    "desc" text NOT NULL,
+    date_open date NOT NULL,
+    deadline date,
+    is_supervised character varying(1) NOT NULL,
+    date_close date,
+    appoint_date date,
+    manager_id integer,
+    start_date date,
+    responsible_id integer,
+    applicant_id integer,
+    caused_by_id integer,
+    closing_type character varying(1),
+    ready_date date,
+    module_id integer,
+    proj character varying(100),
+    exe character varying(100),
+    message_counter integer NOT NULL,
+    decision text
+);
+
+
+ALTER TABLE public.addtask_task OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 16692)
+-- Dependencies: 5
+-- Name: addtask_task_base; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_task_base (
+    id integer NOT NULL,
+    task_id integer NOT NULL,
+    doc_id integer NOT NULL
+);
+
+
+ALTER TABLE public.addtask_task_base OWNER TO postgres;
+
+--
+-- TOC entry 182 (class 1259 OID 16690)
+-- Dependencies: 183 5
+-- Name: addtask_task_base_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_task_base_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_task_base_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2110 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: addtask_task_base_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_task_base_id_seq OWNED BY addtask_task_base.id;
+
+
+--
+-- TOC entry 2111 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: addtask_task_base_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_task_base_id_seq', 6, true);
+
+
+--
+-- TOC entry 184 (class 1259 OID 16700)
+-- Dependencies: 185 5
+-- Name: addtask_task_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_task_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_task_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2112 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: addtask_task_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_task_id_seq OWNED BY addtask_task.id;
+
+
+--
+-- TOC entry 2113 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: addtask_task_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_task_id_seq', 31, true);
+
+
+--
+-- TOC entry 181 (class 1259 OID 16682)
+-- Dependencies: 5
+-- Name: addtask_task_res; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE addtask_task_res (
+    id integer NOT NULL,
+    task_id integer NOT NULL,
+    doc_id integer NOT NULL
+);
+
+
+ALTER TABLE public.addtask_task_res OWNER TO postgres;
+
+--
+-- TOC entry 180 (class 1259 OID 16680)
+-- Dependencies: 5 181
+-- Name: addtask_task_res_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE addtask_task_res_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addtask_task_res_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2114 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: addtask_task_res_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE addtask_task_res_id_seq OWNED BY addtask_task_res.id;
+
+
+--
+-- TOC entry 2115 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: addtask_task_res_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('addtask_task_res_id_seq', 1, false);
+
+
+--
+-- TOC entry 166 (class 1259 OID 16576)
+-- Dependencies: 5
+-- Name: auth_group; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_group (
+    id integer NOT NULL,
+    name character varying(80) NOT NULL
+);
+
+
+ALTER TABLE public.auth_group OWNER TO postgres;
+
+--
+-- TOC entry 165 (class 1259 OID 16574)
+-- Dependencies: 5 166
+-- Name: auth_group_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_group_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2116 (class 0 OID 0)
+-- Dependencies: 165
+-- Name: auth_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
+
+
+--
+-- TOC entry 2117 (class 0 OID 0)
+-- Dependencies: 165
+-- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_group_id_seq', 3, true);
+
+
+--
+-- TOC entry 164 (class 1259 OID 16561)
+-- Dependencies: 5
+-- Name: auth_group_permissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_group_permissions (
+    id integer NOT NULL,
+    group_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_group_permissions OWNER TO postgres;
+
+--
+-- TOC entry 163 (class 1259 OID 16559)
+-- Dependencies: 164 5
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_group_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_permissions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2118 (class 0 OID 0)
+-- Dependencies: 163
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_group_permissions_id_seq OWNED BY auth_group_permissions.id;
+
+
+--
+-- TOC entry 2119 (class 0 OID 0)
+-- Dependencies: 163
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_group_permissions_id_seq', 1, false);
+
+
+--
+-- TOC entry 162 (class 1259 OID 16551)
+-- Dependencies: 5
+-- Name: auth_permission; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_permission (
+    id integer NOT NULL,
+    name character varying(50) NOT NULL,
+    content_type_id integer NOT NULL,
+    codename character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.auth_permission OWNER TO postgres;
+
+--
+-- TOC entry 161 (class 1259 OID 16549)
+-- Dependencies: 162 5
+-- Name: auth_permission_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_permission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_permission_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2120 (class 0 OID 0)
+-- Dependencies: 161
+-- Name: auth_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
+
+
+--
+-- TOC entry 2121 (class 0 OID 0)
+-- Dependencies: 161
+-- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_permission_id_seq', 36, true);
+
+
+--
+-- TOC entry 172 (class 1259 OID 16621)
+-- Dependencies: 5
+-- Name: auth_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user (
+    id integer NOT NULL,
+    username character varying(30) NOT NULL,
+    first_name character varying(30) NOT NULL,
+    last_name character varying(30) NOT NULL,
+    email character varying(75) NOT NULL,
+    password character varying(128) NOT NULL,
+    is_staff boolean NOT NULL,
+    is_active boolean NOT NULL,
+    is_superuser boolean NOT NULL,
+    last_login timestamp with time zone NOT NULL,
+    date_joined timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.auth_user OWNER TO postgres;
+
+--
+-- TOC entry 170 (class 1259 OID 16606)
+-- Dependencies: 5
+-- Name: auth_user_groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user_groups (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    group_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_groups OWNER TO postgres;
+
+--
+-- TOC entry 169 (class 1259 OID 16604)
+-- Dependencies: 5 170
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_groups_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2122 (class 0 OID 0)
+-- Dependencies: 169
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_groups_id_seq OWNED BY auth_user_groups.id;
+
+
+--
+-- TOC entry 2123 (class 0 OID 0)
+-- Dependencies: 169
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_groups_id_seq', 15, true);
+
+
+--
+-- TOC entry 171 (class 1259 OID 16619)
+-- Dependencies: 5 172
+-- Name: auth_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2124 (class 0 OID 0)
+-- Dependencies: 171
+-- Name: auth_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_id_seq OWNED BY auth_user.id;
+
+
+--
+-- TOC entry 2125 (class 0 OID 0)
+-- Dependencies: 171
+-- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_id_seq', 7, true);
+
+
+--
+-- TOC entry 168 (class 1259 OID 16591)
+-- Dependencies: 5
+-- Name: auth_user_user_permissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user_user_permissions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_user_permissions OWNER TO postgres;
+
+--
+-- TOC entry 167 (class 1259 OID 16589)
+-- Dependencies: 168 5
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_user_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_user_permissions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2126 (class 0 OID 0)
+-- Dependencies: 167
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_user_permissions_id_seq OWNED BY auth_user_user_permissions.id;
+
+
+--
+-- TOC entry 2127 (class 0 OID 0)
+-- Dependencies: 167
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_user_permissions_id_seq', 1, false);
+
+
+--
+-- TOC entry 195 (class 1259 OID 16820)
+-- Dependencies: 1970 5
+-- Name: django_admin_log; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_admin_log (
+    id integer NOT NULL,
+    action_time timestamp with time zone NOT NULL,
+    user_id integer NOT NULL,
+    content_type_id integer,
+    object_id text,
+    object_repr character varying(200) NOT NULL,
+    action_flag smallint NOT NULL,
+    change_message text NOT NULL,
+    CONSTRAINT django_admin_log_action_flag_check CHECK ((action_flag >= 0))
+);
+
+
+ALTER TABLE public.django_admin_log OWNER TO postgres;
+
+--
+-- TOC entry 194 (class 1259 OID 16818)
+-- Dependencies: 195 5
+-- Name: django_admin_log_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_admin_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_admin_log_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2128 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: django_admin_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
+
+
+--
+-- TOC entry 2129 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_admin_log_id_seq', 41, true);
+
+
+--
+-- TOC entry 174 (class 1259 OID 16641)
+-- Dependencies: 5
+-- Name: django_content_type; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_content_type (
+    id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    app_label character varying(100) NOT NULL,
+    model character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.django_content_type OWNER TO postgres;
+
+--
+-- TOC entry 173 (class 1259 OID 16639)
+-- Dependencies: 174 5
+-- Name: django_content_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_content_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_content_type_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2130 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: django_content_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_content_type_id_seq OWNED BY django_content_type.id;
+
+
+--
+-- TOC entry 2131 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_content_type_id_seq', 12, true);
+
+
+--
+-- TOC entry 175 (class 1259 OID 16654)
+-- Dependencies: 5
+-- Name: django_session; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_session (
+    session_key character varying(40) NOT NULL,
+    session_data text NOT NULL,
+    expire_date timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.django_session OWNER TO postgres;
+
+--
+-- TOC entry 177 (class 1259 OID 16664)
+-- Dependencies: 5
+-- Name: django_site; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_site (
+    id integer NOT NULL,
+    domain character varying(100) NOT NULL,
+    name character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.django_site OWNER TO postgres;
+
+--
+-- TOC entry 176 (class 1259 OID 16662)
+-- Dependencies: 177 5
+-- Name: django_site_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_site_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_site_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2132 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: django_site_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_site_id_seq OWNED BY django_site.id;
+
+
+--
+-- TOC entry 2133 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: django_site_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_site_id_seq', 1, true);
+
+
+--
+-- TOC entry 1965 (class 2604 OID 16746)
+-- Dependencies: 186 187 187
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_doc ALTER COLUMN id SET DEFAULT nextval('addtask_doc_id_seq'::regclass);
+
+
+--
+-- TOC entry 1968 (class 2604 OID 16805)
+-- Dependencies: 192 193 193
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_message ALTER COLUMN id SET DEFAULT nextval('addtask_message_id_seq'::regclass);
+
+
+--
+-- TOC entry 1967 (class 2604 OID 16779)
+-- Dependencies: 191 190 191
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_module ALTER COLUMN id SET DEFAULT nextval('addtask_module_id_seq'::regclass);
+
+
+--
+-- TOC entry 1966 (class 2604 OID 16764)
+-- Dependencies: 189 188 189
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_module_dev ALTER COLUMN id SET DEFAULT nextval('addtask_module_dev_id_seq'::regclass);
+
+
+--
+-- TOC entry 1961 (class 2604 OID 16675)
+-- Dependencies: 179 178 179
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_person ALTER COLUMN id SET DEFAULT nextval('addtask_person_id_seq'::regclass);
+
+
+--
+-- TOC entry 1964 (class 2604 OID 16705)
+-- Dependencies: 184 185 185
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task ALTER COLUMN id SET DEFAULT nextval('addtask_task_id_seq'::regclass);
+
+
+--
+-- TOC entry 1963 (class 2604 OID 16695)
+-- Dependencies: 182 183 183
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task_base ALTER COLUMN id SET DEFAULT nextval('addtask_task_base_id_seq'::regclass);
+
+
+--
+-- TOC entry 1962 (class 2604 OID 16685)
+-- Dependencies: 180 181 181
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task_res ALTER COLUMN id SET DEFAULT nextval('addtask_task_res_id_seq'::regclass);
+
+
+--
+-- TOC entry 1955 (class 2604 OID 16579)
+-- Dependencies: 165 166 166
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group ALTER COLUMN id SET DEFAULT nextval('auth_group_id_seq'::regclass);
+
+
+--
+-- TOC entry 1954 (class 2604 OID 16564)
+-- Dependencies: 164 163 164
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions ALTER COLUMN id SET DEFAULT nextval('auth_group_permissions_id_seq'::regclass);
+
+
+--
+-- TOC entry 1953 (class 2604 OID 16554)
+-- Dependencies: 162 161 162
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_permission ALTER COLUMN id SET DEFAULT nextval('auth_permission_id_seq'::regclass);
+
+
+--
+-- TOC entry 1958 (class 2604 OID 16624)
+-- Dependencies: 171 172 172
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user ALTER COLUMN id SET DEFAULT nextval('auth_user_id_seq'::regclass);
+
+
+--
+-- TOC entry 1957 (class 2604 OID 16609)
+-- Dependencies: 170 169 170
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups ALTER COLUMN id SET DEFAULT nextval('auth_user_groups_id_seq'::regclass);
+
+
+--
+-- TOC entry 1956 (class 2604 OID 16594)
+-- Dependencies: 168 167 168
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions ALTER COLUMN id SET DEFAULT nextval('auth_user_user_permissions_id_seq'::regclass);
+
+
+--
+-- TOC entry 1969 (class 2604 OID 16823)
+-- Dependencies: 194 195 195
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log ALTER COLUMN id SET DEFAULT nextval('django_admin_log_id_seq'::regclass);
+
+
+--
+-- TOC entry 1959 (class 2604 OID 16644)
+-- Dependencies: 173 174 174
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_content_type ALTER COLUMN id SET DEFAULT nextval('django_content_type_id_seq'::regclass);
+
+
+--
+-- TOC entry 1960 (class 2604 OID 16667)
+-- Dependencies: 177 176 177
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_site ALTER COLUMN id SET DEFAULT nextval('django_site_id_seq'::regclass);
+
+
+--
+-- TOC entry 2089 (class 0 OID 16743)
+-- Dependencies: 187
+-- Data for Name: addtask_doc; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_doc (id, direction, reg_tag, reg_date, ext_reg_tag, ext_reg_date, file) FROM stdin;
+1	I		2012-04-13	\N	\N	task/fnd_gfm_7.xls
+2	I		2012-04-16	\N	\N	task/протокол_загрузки_БВ.docx
+3	I		2012-04-18	\N	\N	task/PRNN_OB_0101_3103.txt
+4	I		2012-04-23	\N	\N	task/PRNN_OB_2012_03_31.txt
+5	I		2012-04-25	\N	\N	task/Лог.xlsx
+6	I		2012-04-25	\N	\N	task/лог_old.xlsx
+\.
+
+
+--
+-- TOC entry 2092 (class 0 OID 16802)
+-- Dependencies: 193
+-- Data for Name: addtask_message; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_message (id, ordnum, body, dbuser, task_id, type) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2091 (class 0 OID 16776)
+-- Dependencies: 191
+-- Data for Name: addtask_module; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_module (id, name, code, status, comment, parent_id, proj, exe) FROM stdin;
+4	HelpDesk	HD	C		\N		
+5	OEBS	OEBS	C		\N		
+1	Загрузка БВ	LD_BSTMNT	C		5		
+6	Новая оборотка	LD_BSTMNT_OSV	C		1		
+7	Форма Загрузка БВ и ввод остатков	XXPI_APBKIMPU	C		5		
+2	Загрузка БВ 1й этап	XXPI_BK_IMP	C		1		
+3	Загрузка БВ 2й этап	XXPI_BK_IMP_STEP	C		1		
+8	Файлы банковских выписок	XXPI_APBKIMP	C		1		
+9	Шаблоны для продажников	XMLPUB	C		5		
+\.
+
+
+--
+-- TOC entry 2090 (class 0 OID 16761)
+-- Dependencies: 189
+-- Data for Name: addtask_module_dev; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_module_dev (id, module_id, person_id) FROM stdin;
+5	4	1
+6	5	1
+7	1	1
+8	6	1
+10	7	1
+11	2	1
+12	3	1
+14	8	1
+15	9	1
+\.
+
+
+--
+-- TOC entry 2085 (class 0 OID 16672)
+-- Dependencies: 179
+-- Data for Name: addtask_person; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_person (id, second_name, "position", login, location, phone) FROM stdin;
+1	Юрьевич	инженер-программист	andrius		8310
+2	Михайловна	Экономист по осуществлению платежей	enedobezhkina		8223
+3	Михайлович	инженер-программист	ipetrovsky		8479
+5	Юрьевич	Начальник СИТ	tvu		123
+\.
+
+
+--
+-- TOC entry 2088 (class 0 OID 16702)
+-- Dependencies: 185
+-- Data for Name: addtask_task; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_task (id, name, "desc", date_open, deadline, is_supervised, date_close, appoint_date, manager_id, start_date, responsible_id, applicant_id, caused_by_id, closing_type, ready_date, module_id, proj, exe, message_counter, decision) FROM stdin;
+1	Повторный запуск 2го этапа при загрузке БВ	ошибочный повторный запуск второго этапа, когда пользователь запускает следующую загрузку до того, как предыдущая не перешла ко ворому этапу загрузки	2012-04-12	\N	N	2012-04-13	2012-04-12	1	2012-04-12	1	2	\N	C	\N	2			0	\N
+3	Отключить рекурсию процедуры  формирования _UDOC 	1. Отключить рекурсию процедуры  формирования _UDOC\r\n	2012-04-12	\N	N	2012-04-13	2012-04-12	1	2012-04-12	1	1	\N	C	\N	3			0	\N
+21	Убрать Кнопку ИСТОРИЯ БВ в форме XXPI_APBKIMPU	Кнопка выдаёт отчёт FastReports по наличию банковских выписок. Кто этим пользуется?	2012-04-19	\N	N	\N	2012-04-19	1	\N	1	1	\N	P	\N	7			0	
+28	Загрузить выписку 01.01.2012-31.03.2012 банк ОТКРЫТИЕ	Загрузить выписку 01.01.2012-31.03.2012 банк ОТКРЫТИЕ	2012-04-23	\N	N	2012-04-24	2012-04-23	1	\N	1	1	\N	C	\N	\N			0	Загружено на прод 23.04.2012\r\nпроверено 24.04.2012
+4	Сделать вычисление периода выписки на основе периодов  в секциях РасчСчет (табл _ACCF) 	3. Сделать вычисление периода выписки на основе периодов  в секциях РасчСчет (табл _ACCF)\r\n	2012-04-12	\N	N	2012-04-15	2012-04-12	1	2012-04-12	1	1	\N	C	\N	2			0	\N
+11	Добавить в задачи атрибут ТИП	Возможные типы:\r\n- доработка (расширение функционала) ПО ERP\r\n- устранение ошибок в ПО erp\r\n- настройка прав доступа пользователя erp\r\n- настройка раб станции пользователя erp для erp	2012-04-17	\N	N	\N	\N	\N	\N	\N	1	\N	P	\N	4			0	
+12	Доработать пользовательскую документацию по новой ОСВ	доб новые функции : \r\n1. проверка периода в фильтре,\r\n2. диалог при запуске расчёта\r\n3. мысли про запуск расчёта из БВ\r\n4. мысли про методику работы с оборотно-сальдовой инфой	2012-04-17	\N	N	2012-04-18	2012-04-17	1	\N	1	1	\N	C	2012-04-18	6	\\\\Tibet\\programmers\\MOMZYAKOV\\OSV_FINAL\\Инструкция по работе с формой ОСВ.docx		0	\N
+17	Убрать удаление выписки из формы БВ	Убрать или отключить кнопку удаления выписки из формы БВ	2012-04-18	\N	N	\N	2012-04-19	1	\N	1	1	\N	\N	\N	7			0	\N
+18	Убрать кнопку Отпр сообщение в XXPI_APBKIMPU	Разобраться	2012-04-19	\N	N	\N	\N	\N	\N	\N	1	\N	\N	\N	7			0	\N
+13	Проверка загрузки выписки Пер-региоНН 01.01-31.03	Проверка загрузки выписки Пер-региоНН 01.01-31.03\r\n\r\nпроверку выполнить на Dev и Test	2012-04-18	\N	N	2012-04-18	2012-04-18	1	\N	1	1	\N	C	\N	1			0	18.04.2012 отправлено почтовое сообщение Гариповой с приложенными логами загрузки на DEVe и TESTe
+16	Убрать повторную загрузку из форм !!!	Форма "Файлы Банковских выписок", кнопка "Повторить загрузку"	2012-04-18	\N	N	\N	2012-04-20	1	\N	1	1	\N	\N	\N	8			0	
+7	Оптимизировать выверку во 2м этапе загрузки БВ	Процедуру XXPI_BK_MATCH.sp_match_check_debit (выверка расходов), выполняемую во втором этапе загрузки БВ, поместить в конкаррент на 20:00 тек. дня.\r\nXXPI_BK_MATCH.sp_match_check_credit (приходы) - выключить совсем.	2012-04-12	\N	N	2012-04-20	2012-04-12	1	2012-04-12	1	1	\N	C	2012-04-19	3	\\\\Tibet\\programmers\\MOMZYAKOV\\BANK_STATEMENT\\BUGFIX3		0	
+26	добавить в список организаций ООО Максимка (АКБ Пересвет)	Доброе утро!\r\nПросьба добавить в список организаций ООО Максимка (АКБ Пересвет)\r\n\r\nЗаранее благодарю\r\n\r\nС уважением, \r\nНедобежкина Елена\r\nтел. (495) 789-8888 доб. 8223\r\n	2012-04-23	\N	N	2012-04-23	2012-04-23	1	\N	1	5	\N	C	\N	\N			0	
+10	Ссылку ред-я и удаления - во вьюшку просмотра задачи	1. Ссылку ред-я - во вьюшку просмотра задачи\r\n2. ссылку удаления - туда же, только для новых задач или для манагеров	2012-04-17	\N	N	\N	\N	\N	\N	\N	1	\N	P	\N	4			0	
+19	Доб поле ВАЖНОСТЬ	Доб поле важность в задачи.\r\nСортировать записи по важности	2012-04-19	\N	N	\N	\N	\N	\N	\N	1	\N	P	\N	4			0	
+9	Вьюшка просмотра задачи - доп поля	для разработчиков и манагеров - все поля задачи, для клиентов - без путей к проекту\r\n	2012-04-17	\N	N	\N	\N	\N	\N	\N	1	\N	P	\N	4			0	
+6	Переделка интерфейса загрузки файла выписки - мастер 	5. Переделка интерфейса загрузки файла выписки - мастер\r\n	2012-04-12	\N	N	\N	2012-04-12	1	2012-04-12	1	1	\N	P	\N	1			0	
+22	Детализировать лог загрузки БВ	Детализировать лог загрузки БВ:\r\n\r\nСообщения о добавлении, измненении и обнаружении подходящих строк в UDOC 	2012-04-20	\N	N	\N	\N	\N	\N	\N	1	\N	\N	\N	1			0	
+23	Из обработки UDOC исключить сравнение id-шников OEBS	Из обработки UDOC исключить сравнение id-шников OEBS	2012-04-20	\N	N	\N	\N	1	\N	1	1	\N	P	\N	3			0	
+20	Что с функцией ввода остатков в XXPI_APBKIMPU?	Что с функцией ввода остатков? Кто пользуется?	2012-04-19	\N	N	\N	\N	\N	\N	\N	1	\N	P	\N	7			0	
+29	Включить во второй этап загрузки сводку ошибок загрузки	Включить во второй этап загрузки сводку ошибок загрузки	2012-04-24	\N	N	\N	2012-04-24	1	\N	1	1	\N	\N	\N	3			0	
+27	Не приходит сообщение OUTLOOK о новых заявках на оплату	Не приходит сообщение OUTLOOK о новых заявках на оплату (Приходят Галушко Оле).\r\n\r\nВозможно, связано с неверной настройкой Outlook'a\r\n\r\n	2012-04-23	\N	N	\N	2012-04-26	1	\N	1	5	\N		2012-04-25	5			0	Синронизированы e-mail'ы Недобежкиной d учётке OEBS и в модуле HR с Outlook'ом 
+30	Добавить окно просмотра платежей, вызываемое двойным кликом по дню	Добавить окно просмотра платежей, вызываемое двойным кликом по дню - выводить все проводки за данный день из UDOC.	2012-04-25	\N	N	\N	2012-04-25	1	2012-04-26	1	1	\N		\N	6			0	
+5	СВОДКА О СОСТОЯНИИ ЗАГРУЗКИ, модификация сообщений об ошибках в соотв формах!!! 	1. СВОДКА О СОСТОЯНИИ ЗАГРУЗКИ, модификация сообщений об ошибках в соотв формах!!! - ПО\r\n2. Описать настройку конкаррента!!!\r\n3. отчёт о состоянии загрузки в RTF (инструкция по настройке)	2012-04-12	\N	N	\N	2012-04-12	1	2012-04-12	1	1	\N		\N	1			0	Сводка об ошибках делается xxpi_osv_v каждый раз при загрузке выписки и сохраняется в таблицу xxpi_bk_err_stats. Отчёт об ошибках делается по сохранённой в xxpi_bk_err_stats статической сводке.\r\n\r\nЕсть возможность запускать формирование сводки по расписанию по заданным ЮЛ (все его расч. счета) или по расч. счёту, начальному и конечному году (4цифры), источнику - "Да" - по 1С, "Нет" - по банк-клиенту.\r\n\r\nСохранённые в xxpi_bk_err_stats сообщения об ошибках за период 01.01 -  последняя предыд. пятница тек года отражаются в форме XXPI_APBKIMPU.
+25	Настроить шаблоны для ахмеровой	Настроить шаблоны для ахмеровой	2012-04-20	\N	N	2012-04-26	2012-04-23	1	\N	1	1	\N	C	2012-04-24	9			0	П_ЛБ12_ПОф_Акт приема-передачи к Агентскому_на оформление1 > добавлен и привязан к Пересвет-Оформление П_ЛБ12_ПОф_Акт приема-передачи к Агентскому_на оформление_Ивлева1 > добавлен и привязан к Пересвет-Оформление П_ЛБ_12_ПОф_Агентский на оформление_(ГЕЛИНКОР )_собственность_не оформлена > добавлен и привязан к Пересвет-Оформление П_ЛБ_12_ПОф_Агентский на оформление_(ГЕЛИНКОР )_собственность_не оформлена_Ивлиева > обновлён и привязан к Пересвет-Оформление П_ЛБ_12_ПОф_Агентский на оформление_(Лойд )_собственность_не оформлена > обновлён и привязан к Пересвет-Оформление П_ЛБ_12_ПОф_Агентский на оформление_(Лойд )_собственность_не оформлена_Ивлиева > обновлён и привязан к Пересвет-Оформление
+31	Добавить Пересвет-Регион-Ростов	Добрый день!\r\nПросьба добавить в список юр. Лиц в oracle\r\nПересвет-Регион-Ростов, а то я его не вижу\r\n	2012-04-26	\N	N	2012-04-26	\N	1	2012-04-26	1	5	\N	C	2012-04-26	5			0	Настроены права OEBS
+\.
+
+
+--
+-- TOC entry 2087 (class 0 OID 16692)
+-- Dependencies: 183
+-- Data for Name: addtask_task_base; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_task_base (id, task_id, doc_id) FROM stdin;
+2	7	2
+3	13	3
+4	28	4
+5	25	5
+6	25	6
+\.
+
+
+--
+-- TOC entry 2086 (class 0 OID 16682)
+-- Dependencies: 181
+-- Data for Name: addtask_task_res; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY addtask_task_res (id, task_id, doc_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2078 (class 0 OID 16576)
+-- Dependencies: 166
+-- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_group (id, name) FROM stdin;
+1	developer
+2	manager
+3	customer
+\.
+
+
+--
+-- TOC entry 2077 (class 0 OID 16561)
+-- Dependencies: 164
+-- Data for Name: auth_group_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_group_permissions (id, group_id, permission_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2076 (class 0 OID 16551)
+-- Dependencies: 162
+-- Data for Name: auth_permission; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_permission (id, name, content_type_id, codename) FROM stdin;
+1	Can add permission	1	add_permission
+2	Can change permission	1	change_permission
+3	Can delete permission	1	delete_permission
+4	Can add group	2	add_group
+5	Can change group	2	change_group
+6	Can delete group	2	delete_group
+7	Can add user	3	add_user
+8	Can change user	3	change_user
+9	Can delete user	3	delete_user
+10	Can add content type	4	add_contenttype
+11	Can change content type	4	change_contenttype
+12	Can delete content type	4	delete_contenttype
+13	Can add session	5	add_session
+14	Can change session	5	change_session
+15	Can delete session	5	delete_session
+16	Can add site	6	add_site
+17	Can change site	6	change_site
+18	Can delete site	6	delete_site
+19	Can add person	7	add_person
+20	Can change person	7	change_person
+21	Can delete person	7	delete_person
+22	Can add task	8	add_task
+23	Can change task	8	change_task
+24	Can delete task	8	delete_task
+25	Can add doc	9	add_doc
+26	Can change doc	9	change_doc
+27	Can delete doc	9	delete_doc
+28	Can add module	10	add_module
+29	Can change module	10	change_module
+30	Can delete module	10	delete_module
+31	Can add message	11	add_message
+32	Can change message	11	change_message
+33	Can delete message	11	delete_message
+34	Can add log entry	12	add_logentry
+35	Can change log entry	12	change_logentry
+36	Can delete log entry	12	delete_logentry
+\.
+
+
+--
+-- TOC entry 2081 (class 0 OID 16621)
+-- Dependencies: 172
+-- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_user (id, username, first_name, last_name, email, password, is_staff, is_active, is_superuser, last_login, date_joined) FROM stdin;
+3	dev				pbkdf2_sha256$10000$vTX6b0VP8uGI$Lih59OFopGdwp2qXxz/VKnLmJvTG/IQcKvRFTlW7cqI=	f	t	f	2012-04-16 15:38:59.884+04	2012-04-12 12:58:08+04
+2	man	Манагер			pbkdf2_sha256$10000$Kk09b6lEMYI4$l9swvZFPNVuF14eUtRilL4TrDJW1rMO1Yfwmldio2Wg=	f	t	f	2012-04-16 15:39:23.982+04	2012-04-12 12:56:47+04
+4	cust				pbkdf2_sha256$10000$EAA5MiL9Bn48$Z+dEZsnd/uJSPeIS96VEC6SC6O48aZacwB83T1/URcY=	f	t	f	2012-04-18 14:11:09.433+04	2012-04-12 12:58:41+04
+5	enedobezhkina	Елена	Недобежкина		pbkdf2_sha256$10000$oNKEp1TDLSqB$dWZK7nJW4NzJQ6ZMT2w4lrdIiIIkEAneDv/V0x9usYw=	f	t	f	2012-04-20 12:50:03+04	2012-04-20 12:49:24+04
+6	ipetrovsky	Иван	Петровский	ipetrovsky@peresvet.ru	pbkdf2_sha256$10000$0elyfJWSMjZ8$Ar8/nnmZpdAhyPKVS724Jz8wAne91TiibjPySGGHvsw=	f	t	f	2012-04-24 14:11:02+04	2012-04-24 14:11:02+04
+7	tvu	Владимир	Трясцин	tvu@peresvet.ru	pbkdf2_sha256$10000$fteRZYJjLmJ5$BqfrEj+u/6lHukDqw5Yh3c+oweav5hXLKpRGCBD9vCE=	f	t	f	2012-04-24 14:15:17+04	2012-04-24 14:15:17+04
+1	andrius	Андрей	Момзяков	andrius-smth@yandex.ru	pbkdf2_sha256$10000$DVZa7aTks0rP$ut5GjdXoantcS6AT72tOeoH346S5uCqjj0cMFIwwLto=	t	t	t	2012-04-26 16:51:29.552+04	2012-04-12 12:21:50+04
+\.
+
+
+--
+-- TOC entry 2080 (class 0 OID 16606)
+-- Dependencies: 170
+-- Data for Name: auth_user_groups; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_user_groups (id, user_id, group_id) FROM stdin;
+1	2	2
+5	3	1
+6	4	3
+7	1	1
+8	1	2
+9	1	3
+11	5	3
+12	6	1
+13	6	2
+14	7	1
+15	7	2
+\.
+
+
+--
+-- TOC entry 2079 (class 0 OID 16591)
+-- Dependencies: 168
+-- Data for Name: auth_user_user_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_user_user_permissions (id, user_id, permission_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2093 (class 0 OID 16820)
+-- Dependencies: 195
+-- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_admin_log (id, action_time, user_id, content_type_id, object_id, object_repr, action_flag, change_message) FROM stdin;
+1	2012-04-12 12:50:49.304+04	1	2	1	developer	1	
+2	2012-04-12 12:51:00.491+04	1	2	2	manager	1	
+3	2012-04-12 12:51:11.585+04	1	2	3	customer	1	
+4	2012-04-12 12:56:47.302+04	1	3	2	man	1	
+5	2012-04-12 12:57:27.529+04	1	3	2	man	2	Изменен password,first_name и groups.
+6	2012-04-12 12:57:46.649+04	1	3	1	andrius	2	Изменен password и groups.
+7	2012-04-12 12:58:08.301+04	1	3	3	dev	1	
+8	2012-04-12 12:58:14.65+04	1	3	3	dev	2	Изменен password и groups.
+9	2012-04-12 12:58:41.215+04	1	3	4	cust	1	
+10	2012-04-12 12:58:48.7+04	1	3	4	cust	2	Изменен password и groups.
+11	2012-04-12 17:02:18.659+04	1	7	1	<andrius>  Юрьевич  - инженер-программист	1	
+12	2012-04-12 17:02:30.989+04	1	10	1	LD_BSTMNT_Загрузка БВ	1	
+13	2012-04-12 17:03:50.074+04	1	3	1	andrius	2	Изменен password,first_name и last_name.
+14	2012-04-12 17:04:22.929+04	1	10	1	LD_BSTMNT_Загрузка БВ	2	Ни одно поле не изменено.
+15	2012-04-12 17:05:20.114+04	1	10	2	LD_BSTMNT_1_Загрузка БВ 1й этап	1	
+16	2012-04-12 17:05:54.341+04	1	10	3	LD_BSTMNT_2_Загрузка БВ 2й этап	1	
+17	2012-04-17 10:36:29.127+04	1	10	4	HD_HelpDesk	1	
+18	2012-04-17 11:22:00.531+04	1	10	5	OEBS_OEBS	1	
+19	2012-04-17 11:22:38.288+04	1	10	1	LD_BSTMNT_Загрузка БВ	2	Изменен parent.
+20	2012-04-17 11:23:25.874+04	1	10	6	LD_BSTMNT_OSV_Новая оборотка	1	
+21	2012-04-17 11:48:55.522+04	1	8	8	<ID:8>тестовая - file upload	3	
+22	2012-04-18 14:14:37.938+04	1	8	14	<ID:14>моя	3	
+23	2012-04-18 14:14:47.221+04	1	8	15	<ID:15>моя2	3	
+24	2012-04-19 15:36:00.718+04	1	10	7	XXPI_APBKIMPU_Форма Загрузка БВ и ввод остатков	1	
+25	2012-04-19 15:36:19.593+04	1	10	7	XXPI_APBKIMPU_Форма Загрузка БВ и ввод остатков	2	Изменен parent.
+26	2012-04-19 15:54:02.578+04	1	10	2	XXPI_BK_IMP_Загрузка БВ 1й этап	2	Изменен code.
+27	2012-04-19 15:54:22.296+04	1	10	3	XXPI_BK_IMP_STEP_Загрузка БВ 2й этап	2	Изменен code.
+28	2012-04-20 09:58:37.375+04	1	10	8	XXPI_APBKIMP_Файлы банковских выписок	1	
+29	2012-04-20 09:58:56.156+04	1	10	8	XXPI_APBKIMP_Файлы банковских выписок	2	Изменен parent.
+30	2012-04-20 12:49:24.531+04	1	3	5	enedobezhkina	1	
+31	2012-04-20 12:49:40.89+04	1	3	5	enedobezhkina	2	Изменен password и groups.
+32	2012-04-20 12:59:02.312+04	1	8	24	<ID:24>test	3	
+33	2012-04-20 13:02:07.421+04	1	7	2	<enedobezhkina>  Михайловна  - Экономист по осуществлению платежей	1	
+34	2012-04-23 12:48:27.708+04	1	10	9	XMLPUB_Шаблоны для продажников	1	
+35	2012-04-23 13:52:31.473+04	1	3	5	enedobezhkina	2	Изменен password,first_name и last_name.
+36	2012-04-24 14:11:02.383+04	1	3	6	ipetrovsky	1	
+37	2012-04-24 14:12:15.529+04	1	3	6	ipetrovsky	2	Изменен password,first_name,last_name,email и groups.
+38	2012-04-24 14:13:38.183+04	1	7	3	<ipetrovsky> Иван Михайлович Петровский - инженер-программист	1	
+39	2012-04-24 14:15:17.362+04	1	3	7	tvu	1	
+40	2012-04-24 14:15:53.545+04	1	3	7	tvu	2	Изменен password,first_name,last_name,email и groups.
+41	2012-04-24 14:16:33.386+04	1	7	5	<tvu> Владимир Юрьевич Трясцин - Начальник СИТ	1	
+\.
+
+
+--
+-- TOC entry 2082 (class 0 OID 16641)
+-- Dependencies: 174
+-- Data for Name: django_content_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_content_type (id, name, app_label, model) FROM stdin;
+1	permission	auth	permission
+2	group	auth	group
+3	user	auth	user
+4	content type	contenttypes	contenttype
+5	session	sessions	session
+6	site	sites	site
+7	person	addtask	person
+8	task	addtask	task
+9	doc	addtask	doc
+10	module	addtask	module
+11	message	addtask	message
+12	log entry	admin	logentry
+\.
+
+
+--
+-- TOC entry 2083 (class 0 OID 16654)
+-- Dependencies: 175
+-- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_session (session_key, session_data, expire_date) FROM stdin;
+c22f80474ffac854edf056e7f4c1b301	MTBlMjk4MDU1YzZmYjUzZWFjMjIwMmQxNGYzYzJiNzA1ODcwZjQwYzqAAn1xAShVEl9hdXRoX3Vz\nZXJfYmFja2VuZHECVSlkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZHED\nVQ1fYXV0aF91c2VyX2lkcQRLAXUu\n	2012-05-01 10:02:36.777+04
+53e946fc639ee3d1858bd3a796a813dc	MTBlMjk4MDU1YzZmYjUzZWFjMjIwMmQxNGYzYzJiNzA1ODcwZjQwYzqAAn1xAShVEl9hdXRoX3Vz\nZXJfYmFja2VuZHECVSlkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZHED\nVQ1fYXV0aF91c2VyX2lkcQRLAXUu\n	2012-05-04 12:58:45.796+04
+dfaf7e896517ade168b0ae11f4b8e162	MTBlMjk4MDU1YzZmYjUzZWFjMjIwMmQxNGYzYzJiNzA1ODcwZjQwYzqAAn1xAShVEl9hdXRoX3Vz\nZXJfYmFja2VuZHECVSlkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZHED\nVQ1fYXV0aF91c2VyX2lkcQRLAXUu\n	2012-05-10 16:51:29.567+04
+\.
+
+
+--
+-- TOC entry 2084 (class 0 OID 16664)
+-- Dependencies: 177
+-- Data for Name: django_site; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_site (id, domain, name) FROM stdin;
+1	example.com	example.com
+\.
+
+
+--
+-- TOC entry 2035 (class 2606 OID 16748)
+-- Dependencies: 187 187
+-- Name: addtask_doc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_doc
+    ADD CONSTRAINT addtask_doc_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2046 (class 2606 OID 16810)
+-- Dependencies: 193 193
+-- Name: addtask_message_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_message
+    ADD CONSTRAINT addtask_message_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2049 (class 2606 OID 16812)
+-- Dependencies: 193 193 193
+-- Name: addtask_message_task_id_ordnum_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_message
+    ADD CONSTRAINT addtask_message_task_id_ordnum_key UNIQUE (task_id, ordnum);
+
+
+--
+-- TOC entry 2038 (class 2606 OID 16768)
+-- Dependencies: 189 189 189
+-- Name: addtask_module_dev_module_id_person_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_module_dev
+    ADD CONSTRAINT addtask_module_dev_module_id_person_id_key UNIQUE (module_id, person_id);
+
+
+--
+-- TOC entry 2041 (class 2606 OID 16766)
+-- Dependencies: 189 189
+-- Name: addtask_module_dev_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_module_dev
+    ADD CONSTRAINT addtask_module_dev_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2044 (class 2606 OID 16784)
+-- Dependencies: 191 191
+-- Name: addtask_module_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_module
+    ADD CONSTRAINT addtask_module_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2012 (class 2606 OID 16679)
+-- Dependencies: 179 179
+-- Name: addtask_person_login_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_person
+    ADD CONSTRAINT addtask_person_login_key UNIQUE (login);
+
+
+--
+-- TOC entry 2014 (class 2606 OID 16677)
+-- Dependencies: 179 179
+-- Name: addtask_person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_person
+    ADD CONSTRAINT addtask_person_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2023 (class 2606 OID 16697)
+-- Dependencies: 183 183
+-- Name: addtask_task_base_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_task_base
+    ADD CONSTRAINT addtask_task_base_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2026 (class 2606 OID 16699)
+-- Dependencies: 183 183 183
+-- Name: addtask_task_base_task_id_doc_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_task_base
+    ADD CONSTRAINT addtask_task_base_task_id_doc_id_key UNIQUE (task_id, doc_id);
+
+
+--
+-- TOC entry 2032 (class 2606 OID 16710)
+-- Dependencies: 185 185
+-- Name: addtask_task_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_task
+    ADD CONSTRAINT addtask_task_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2017 (class 2606 OID 16687)
+-- Dependencies: 181 181
+-- Name: addtask_task_res_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_task_res
+    ADD CONSTRAINT addtask_task_res_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2020 (class 2606 OID 16689)
+-- Dependencies: 181 181 181
+-- Name: addtask_task_res_task_id_doc_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY addtask_task_res
+    ADD CONSTRAINT addtask_task_res_task_id_doc_id_key UNIQUE (task_id, doc_id);
+
+
+--
+-- TOC entry 1983 (class 2606 OID 16583)
+-- Dependencies: 166 166
+-- Name: auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_name_key UNIQUE (name);
+
+
+--
+-- TOC entry 1978 (class 2606 OID 16568)
+-- Dependencies: 164 164 164
+-- Name: auth_group_permissions_group_id_permission_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_group_id_permission_id_key UNIQUE (group_id, permission_id);
+
+
+--
+-- TOC entry 1981 (class 2606 OID 16566)
+-- Dependencies: 164 164
+-- Name: auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1985 (class 2606 OID 16581)
+-- Dependencies: 166 166
+-- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1973 (class 2606 OID 16558)
+-- Dependencies: 162 162 162
+-- Name: auth_permission_content_type_id_codename_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_content_type_id_codename_key UNIQUE (content_type_id, codename);
+
+
+--
+-- TOC entry 1975 (class 2606 OID 16556)
+-- Dependencies: 162 162
+-- Name: auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1994 (class 2606 OID 16611)
+-- Dependencies: 170 170
+-- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1997 (class 2606 OID 16613)
+-- Dependencies: 170 170 170
+-- Name: auth_user_groups_user_id_group_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_user_id_group_id_key UNIQUE (user_id, group_id);
+
+
+--
+-- TOC entry 1999 (class 2606 OID 16626)
+-- Dependencies: 172 172
+-- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1988 (class 2606 OID 16596)
+-- Dependencies: 168 168
+-- Name: auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1991 (class 2606 OID 16598)
+-- Dependencies: 168 168 168
+-- Name: auth_user_user_permissions_user_id_permission_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_user_id_permission_id_key UNIQUE (user_id, permission_id);
+
+
+--
+-- TOC entry 2001 (class 2606 OID 16628)
+-- Dependencies: 172 172
+-- Name: auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_username_key UNIQUE (username);
+
+
+--
+-- TOC entry 2052 (class 2606 OID 16829)
+-- Dependencies: 195 195
+-- Name: django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2003 (class 2606 OID 16648)
+-- Dependencies: 174 174 174
+-- Name: django_content_type_app_label_model_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_app_label_model_key UNIQUE (app_label, model);
+
+
+--
+-- TOC entry 2005 (class 2606 OID 16646)
+-- Dependencies: 174 174
+-- Name: django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2008 (class 2606 OID 16661)
+-- Dependencies: 175 175
+-- Name: django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_session
+    ADD CONSTRAINT django_session_pkey PRIMARY KEY (session_key);
+
+
+--
+-- TOC entry 2010 (class 2606 OID 16669)
+-- Dependencies: 177 177
+-- Name: django_site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_site
+    ADD CONSTRAINT django_site_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2047 (class 1259 OID 16861)
+-- Dependencies: 193
+-- Name: addtask_message_task_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_message_task_id ON addtask_message USING btree (task_id);
+
+
+--
+-- TOC entry 2036 (class 1259 OID 16858)
+-- Dependencies: 189
+-- Name: addtask_module_dev_module_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_module_dev_module_id ON addtask_module_dev USING btree (module_id);
+
+
+--
+-- TOC entry 2039 (class 1259 OID 16859)
+-- Dependencies: 189
+-- Name: addtask_module_dev_person_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_module_dev_person_id ON addtask_module_dev USING btree (person_id);
+
+
+--
+-- TOC entry 2042 (class 1259 OID 16860)
+-- Dependencies: 191
+-- Name: addtask_module_parent_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_module_parent_id ON addtask_module USING btree (parent_id);
+
+
+--
+-- TOC entry 2027 (class 1259 OID 16855)
+-- Dependencies: 185
+-- Name: addtask_task_applicant_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_applicant_id ON addtask_task USING btree (applicant_id);
+
+
+--
+-- TOC entry 2021 (class 1259 OID 16852)
+-- Dependencies: 183
+-- Name: addtask_task_base_doc_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_base_doc_id ON addtask_task_base USING btree (doc_id);
+
+
+--
+-- TOC entry 2024 (class 1259 OID 16851)
+-- Dependencies: 183
+-- Name: addtask_task_base_task_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_base_task_id ON addtask_task_base USING btree (task_id);
+
+
+--
+-- TOC entry 2028 (class 1259 OID 16856)
+-- Dependencies: 185
+-- Name: addtask_task_caused_by_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_caused_by_id ON addtask_task USING btree (caused_by_id);
+
+
+--
+-- TOC entry 2029 (class 1259 OID 16853)
+-- Dependencies: 185
+-- Name: addtask_task_manager_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_manager_id ON addtask_task USING btree (manager_id);
+
+
+--
+-- TOC entry 2030 (class 1259 OID 16857)
+-- Dependencies: 185
+-- Name: addtask_task_module_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_module_id ON addtask_task USING btree (module_id);
+
+
+--
+-- TOC entry 2015 (class 1259 OID 16850)
+-- Dependencies: 181
+-- Name: addtask_task_res_doc_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_res_doc_id ON addtask_task_res USING btree (doc_id);
+
+
+--
+-- TOC entry 2018 (class 1259 OID 16849)
+-- Dependencies: 181
+-- Name: addtask_task_res_task_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_res_task_id ON addtask_task_res USING btree (task_id);
+
+
+--
+-- TOC entry 2033 (class 1259 OID 16854)
+-- Dependencies: 185
+-- Name: addtask_task_responsible_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX addtask_task_responsible_id ON addtask_task USING btree (responsible_id);
+
+
+--
+-- TOC entry 1976 (class 1259 OID 16842)
+-- Dependencies: 164
+-- Name: auth_group_permissions_group_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_group_id ON auth_group_permissions USING btree (group_id);
+
+
+--
+-- TOC entry 1979 (class 1259 OID 16843)
+-- Dependencies: 164
+-- Name: auth_group_permissions_permission_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_permission_id ON auth_group_permissions USING btree (permission_id);
+
+
+--
+-- TOC entry 1971 (class 1259 OID 16841)
+-- Dependencies: 162
+-- Name: auth_permission_content_type_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_permission_content_type_id ON auth_permission USING btree (content_type_id);
+
+
+--
+-- TOC entry 1992 (class 1259 OID 16847)
+-- Dependencies: 170
+-- Name: auth_user_groups_group_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_group_id ON auth_user_groups USING btree (group_id);
+
+
+--
+-- TOC entry 1995 (class 1259 OID 16846)
+-- Dependencies: 170
+-- Name: auth_user_groups_user_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_user_id ON auth_user_groups USING btree (user_id);
+
+
+--
+-- TOC entry 1986 (class 1259 OID 16845)
+-- Dependencies: 168
+-- Name: auth_user_user_permissions_permission_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_permission_id ON auth_user_user_permissions USING btree (permission_id);
+
+
+--
+-- TOC entry 1989 (class 1259 OID 16844)
+-- Dependencies: 168
+-- Name: auth_user_user_permissions_user_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_user_id ON auth_user_user_permissions USING btree (user_id);
+
+
+--
+-- TOC entry 2050 (class 1259 OID 16863)
+-- Dependencies: 195
+-- Name: django_admin_log_content_type_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_content_type_id ON django_admin_log USING btree (content_type_id);
+
+
+--
+-- TOC entry 2053 (class 1259 OID 16862)
+-- Dependencies: 195
+-- Name: django_admin_log_user_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_user_id ON django_admin_log USING btree (user_id);
+
+
+--
+-- TOC entry 2006 (class 1259 OID 16848)
+-- Dependencies: 175
+-- Name: django_session_expire_date; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_session_expire_date ON django_session USING btree (expire_date);
+
+
+--
+-- TOC entry 2073 (class 2606 OID 16813)
+-- Dependencies: 193 185 2031
+-- Name: addtask_message_task_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_message
+    ADD CONSTRAINT addtask_message_task_id_fkey FOREIGN KEY (task_id) REFERENCES addtask_task(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2070 (class 2606 OID 16769)
+-- Dependencies: 189 2013 179
+-- Name: addtask_module_dev_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_module_dev
+    ADD CONSTRAINT addtask_module_dev_person_id_fkey FOREIGN KEY (person_id) REFERENCES addtask_person(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2065 (class 2606 OID 16864)
+-- Dependencies: 172 1998 185
+-- Name: addtask_task_applicant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task
+    ADD CONSTRAINT addtask_task_applicant_id_fkey FOREIGN KEY (applicant_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2066 (class 2606 OID 16869)
+-- Dependencies: 172 1998 185
+-- Name: addtask_task_manager_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task
+    ADD CONSTRAINT addtask_task_manager_id_fkey FOREIGN KEY (manager_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2067 (class 2606 OID 16874)
+-- Dependencies: 185 172 1998
+-- Name: addtask_task_responsible_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task
+    ADD CONSTRAINT addtask_task_responsible_id_fkey FOREIGN KEY (responsible_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2055 (class 2606 OID 16569)
+-- Dependencies: 162 1974 164
+-- Name: auth_group_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES auth_permission(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2059 (class 2606 OID 16614)
+-- Dependencies: 166 170 1984
+-- Name: auth_user_groups_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_group_id_fkey FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2057 (class 2606 OID 16599)
+-- Dependencies: 168 1974 162
+-- Name: auth_user_user_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES auth_permission(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2068 (class 2606 OID 16879)
+-- Dependencies: 185 185 2031
+-- Name: caused_by_id_refs_id_217c5b99; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task
+    ADD CONSTRAINT caused_by_id_refs_id_217c5b99 FOREIGN KEY (caused_by_id) REFERENCES addtask_task(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2054 (class 2606 OID 16649)
+-- Dependencies: 162 174 2004
+-- Name: content_type_id_refs_id_728de91f; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT content_type_id_refs_id_728de91f FOREIGN KEY (content_type_id) REFERENCES django_content_type(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2075 (class 2606 OID 16835)
+-- Dependencies: 195 2004 174
+-- Name: django_admin_log_content_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_content_type_id_fkey FOREIGN KEY (content_type_id) REFERENCES django_content_type(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2074 (class 2606 OID 16830)
+-- Dependencies: 1998 195 172
+-- Name: django_admin_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2064 (class 2606 OID 16754)
+-- Dependencies: 187 2034 183
+-- Name: doc_id_refs_id_3727549e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task_base
+    ADD CONSTRAINT doc_id_refs_id_3727549e FOREIGN KEY (doc_id) REFERENCES addtask_doc(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2062 (class 2606 OID 16749)
+-- Dependencies: 2034 181 187
+-- Name: doc_id_refs_id_666e2b88; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task_res
+    ADD CONSTRAINT doc_id_refs_id_666e2b88 FOREIGN KEY (doc_id) REFERENCES addtask_doc(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2056 (class 2606 OID 16584)
+-- Dependencies: 166 164 1984
+-- Name: group_id_refs_id_3cea63fe; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT group_id_refs_id_3cea63fe FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2069 (class 2606 OID 16884)
+-- Dependencies: 191 2043 185
+-- Name: module_id_refs_id_24676bbc; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task
+    ADD CONSTRAINT module_id_refs_id_24676bbc FOREIGN KEY (module_id) REFERENCES addtask_module(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2071 (class 2606 OID 16790)
+-- Dependencies: 189 2043 191
+-- Name: module_id_refs_id_59f2c377; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_module_dev
+    ADD CONSTRAINT module_id_refs_id_59f2c377 FOREIGN KEY (module_id) REFERENCES addtask_module(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2072 (class 2606 OID 16795)
+-- Dependencies: 2043 191 191
+-- Name: parent_id_refs_id_512b7bc3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_module
+    ADD CONSTRAINT parent_id_refs_id_512b7bc3 FOREIGN KEY (parent_id) REFERENCES addtask_module(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2061 (class 2606 OID 16726)
+-- Dependencies: 185 181 2031
+-- Name: task_id_refs_id_26b4caac; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task_res
+    ADD CONSTRAINT task_id_refs_id_26b4caac FOREIGN KEY (task_id) REFERENCES addtask_task(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2063 (class 2606 OID 16731)
+-- Dependencies: 185 2031 183
+-- Name: task_id_refs_id_97a8d3e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY addtask_task_base
+    ADD CONSTRAINT task_id_refs_id_97a8d3e FOREIGN KEY (task_id) REFERENCES addtask_task(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2060 (class 2606 OID 16634)
+-- Dependencies: 1998 172 170
+-- Name: user_id_refs_id_7ceef80f; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT user_id_refs_id_7ceef80f FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2058 (class 2606 OID 16629)
+-- Dependencies: 1998 172 168
+-- Name: user_id_refs_id_dfbab7d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT user_id_refs_id_dfbab7d FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- TOC entry 2098 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2012-04-28 15:59:18
+
+--
+-- PostgreSQL database dump complete
+--
+

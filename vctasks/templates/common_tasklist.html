@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}HelpDesk-Список задач{% endblock %}
+{% block content %}
+    <button onclick="parent.location='/tasklist/'">Все</button>
+    <button onclick="parent.location='/tasklist/?status=new'">Новые</button>
+    <button onclick="parent.location='/tasklist/?status=set'">Назначенные</button>
+    <button onclick="parent.location='/tasklist/?status=not_open'">Все ещё не в обработке</button>
+    <button onclick="parent.location='/tasklist/?status=open'">В обработке</button>
+    <button onclick="parent.location='/tasklist/?status=not_ready'">Все ещё неготовые</button>
+    <button onclick="parent.location='/tasklist/?status=ready'">Готовые</button>
+    <button onclick="parent.location='/tasklist/?status=not_closed'">Все незакрытые</button>
+    <button onclick="parent.location='/tasklist/?status=closed'">Закрытые</button>
+    <button onclick="parent.location='/tasklist/?status=pending'">Отложенные</button>
+    <table border="4" cellspacing="1" cellpadding="4">
+    <caption><h3>Список заявок {{ status_name }}</h3></caption>
+      <tr class="tabcolhead" border="4" align='center' bgcolor='green'>
+          <td>ID заявки</td>
+          <td>Дата заявки</td>
+          {% if all_cols %}
+          <td>Заявитель</td>
+          {% endif %}
+          <td>Предмет заявки</td>
+          <td>Исполнитель</td>
+          <td>Назначил</td>
+          <td>Дата назначения</td>
+          <td>Принято в работу</td>
+          <td>Статус заявки</td>
+          <td>Модуль</td>
+      </tr>
+    {% for task in object_list %}
+      <tr>
+        <td>{{ task.id }}</td>
+        <td>{{ task.dmy_date_open }}</td>
+        {% if all_cols %}
+        <td>{{ task.get_applicant_name }}</td>
+        {% endif %}
+        <td><a href="/taskdetail/{{ task.id }}/?view=yes">{{ task.name }}</a></td>
+        <td>{{ task.get_developer_name }}</td>
+        <td>{{ task.get_manager_name }}</td>
+        <td>{{ task.dmy_appoint_date }}</td>
+        <td>{{ task.dmy_start_date }}</td>
+        <td nowrap>{{ task.get_status_name }}</td>
+        <td>{{ task.module }}</td>
+      </tr>      
+    {% endfor %}
+    </table>                     
+    <p></p>
+    <table align="center">
+      <tr>
+        {% if page_obj.number > 1 %}
+          {% if status %}
+            <td><a href="/tasklist/1/?status={{ status}}">"Первая"</a></td>
+          {% else %}
+            <td><a href="/tasklist/1/">"Первая"</a></td>
+          {% endif%}
+        {% endif %}
+        {% if page_obj.has_previous %}
+          {% if status %}
+            <td><a href="/tasklist/{{ page_obj.previous_page_number }}/?status={{ status}}">"Предыдущая"</a></td>
+          {% else %}
+            <td><a href="/tasklist/{{ page_obj.previous_page_number }}/">"Предыдущая"</a></td>
+          {% endif%}
+        {% endif %}
+        <td>Стр. {{ page_obj.number }} из {{ paginator.num_pages }}</td>
+        {% if page_obj.has_next %}
+          {% if status %}
+            <td><a href="/tasklist/{{ page_obj.next_page_number }}/?status={{ status}}">"Следующая"</a></td>
+          {% else %}
+            <td><a href="/tasklist/{{ page_obj.next_page_number }}/">"Следующая"</a></td>
+          {% endif%}
+        {% endif %}
+        {% if page_obj.has_next %}
+          {% if status %}
+            <td><a href="/tasklist/{{ page_obj.paginator.num_pages }}/?status={{ status}}">"Последняя"</a></td>
+          {% else %}
+            <td><a href="/tasklist/{{ page_obj.paginator.num_pages }}/">"Последняя"</a></td>
+          {% endif%}
+        {% endif %}
+      </tr>
+    </table>
+{% endblock %}

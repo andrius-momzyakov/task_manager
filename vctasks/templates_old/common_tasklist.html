@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Список задач{% endblock %}
+{% block content %}
+    <table width="100%" border="4" cellspacing="1" cellpadding="4">
+      <tr border="4" align='center' style='color: white' bgcolor='green'>
+          <td>ID заявки</td>
+          <td>Дата заявки</td>
+          {% if all_cols %}
+          <td>Имя пользователя</td>
+          {% endif %}
+          <td>Предмет заявки</td>
+      </tr>
+    {% for task in object_list %}
+      <tr>
+        <td>{{ task.id }}</td>
+        <td>{{ task.dmy_date_open }}</td>
+        {% if all_cols %}
+        <td>{{ task.dbuser }}</td>
+        {% endif %}
+        <td>{{ task.name }}</td>
+      </tr>      
+    {% endfor %}
+    </table>                     
+    <p></p>
+    <table align="center">
+      <tr>
+        {% if page_obj.number > 1 %}
+        <td><a href="/tasklist/1/">"Первая"</a></td>
+        {% endif %}
+        {% if page_obj.has_previous %}
+        <td><a href="/tasklist/{{ page_obj.previous_page_number }}/">"Предыдущая"</a></td>
+        {% endif %}
+        <td>Стр. {{ page_obj.number }} из {{ paginator.num_pages }}</td>
+        {% if page_obj.has_next %}
+        <td><a href="/tasklist/{{ page_obj.next_page_number }}/">"Следующая"</a></td>
+        {% endif %}
+        {% if page_obj.has_next %}
+        <td><a href="/tasklist/{{ page_obj.paginator.num_pages }}/">"Последняя"</a></td>
+        {% endif %}
+      </tr>
+    </table>
+{% endblock %}

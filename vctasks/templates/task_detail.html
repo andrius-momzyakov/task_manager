@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}HelpDesk-Задача ID={{ object.id }}{% endblock %}
+{% block content %}
+<H3>{{ header }}</h3>
+<table border="4" cellspacing="1" cellpadding="4">
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Дата регистрации:</td><td>{{ object.dmy_date_open }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Заявитель:</td><td>{{ object.get_applicant_name }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Предмет:</td><td>{{ object.name }}</td><tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Доп. информация:</td><td>{{ object.desc }}</td><tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Назначил:</td><td>{{ object.get_manager_name }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Ответственный:</td><td>{{ object.get_developer_name }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Дата назначения:</td><td>{{ object.dmy_appoint_date }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Контрольный срок:</td><td>{{ object.dmy_deadline }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Контрольное:</td><td>{{ object.is_supervised_name }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Принято в работу:</td><td>{{ object.dmy_start_date }}</td></tr>
+{% if show_all %}
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Модуль:</td><td>{{ object.module }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Путь к сборке</td><td>{{ object.proj }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Путь к документации</td><td>{{ object.exe }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Дата готовности:</td><td>{{ object.dmy_ready_date }}</td></tr>
+{% endif %}
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Решение:</td><td>{{ object.decision }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Дата закрытия:</td><td>{{ object.dmy_date_close }}</td></tr>
+<tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Статус:</td><td>{{ object.get_status_name }}</td></tr>
+{% if files %}
+<tr>
+<td class="tabcolhead" border="4" align='center' bgcolor='green'>Прикреплённые файлы:</td><td>
+{% for file in files %}
+<p><a href="/file/?fname={{ file.quote_file }}">{{ file.file }}</a></p>
+{% endfor %}
+</td>
+</tr>
+{% endif %}
+</table>
+{% if full_edit %}
+<p><a href="/taskdetail/{{ object.id }}">Редактировать</a></p>
+{% endif %}
+{% if short_edit %}
+<p><a href="/addtask/{{ object.id }}">Редактировать</a></p>
+{% endif %}
+
+{% endblock %}

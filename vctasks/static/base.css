@@ -1,0 +1,99 @@
+/* CSS Document */
+
+h1 {
+  color: #4682B4;
+}
+
+h2 {
+  color: #008080; /*4169E1;#696969 */
+}
+
+h3{
+  color: #191970;
+}
+
+ul.errorlist {
+  margin: 0;
+  padding: 0;
+}
+.errorlist li {
+  background-color: white;
+  color: red;
+  display: block;
+  font-size: 14px;
+  margin: 0 0 3px;
+  padding: 4px 5px;
+}
+
+.header {
+  float: left;
+  width: 100%;
+  background-color: gray; /*#F4A460; */
+  color: white; /* #ffffff */ 
+  text-align: center;
+  
+}
+
+.sidebar {
+  margin-top: 20px;
+  margin-left: 20px; 
+  float: left; 
+  width: 15%;
+  background-color: #F0F8FF;
+  border: 1px double blue;
+  padding-left: 10px; 
+  padding-bottom: 10px;
+  border-spacing: 4px;
+  font-family: Calibri, Tahoma, 'Times New Roman';
+  text-shadow: #A0A0A4 0 0 2px
+}
+
+.content {       
+  /*overflow: hidden;*/
+  margin-top: 20px;
+  margin-left: 1%; 
+  float:left;
+  width: 75% ; 
+  padding-left: 10px; 
+  font-family: Calibri, Tahoma, 'Times New Roman';
+}
+.sidemenubutton {
+  /*font-size: 125%;*/
+   /*14pt;*/
+  font-size:110%; 
+  font-family: Calibri, Tahoma, 'Times New Roman';
+  width:80%; 
+  height:50px;
+  color:#191970;
+  /* border: 1px double blue; */
+  border-style: none ;
+  border-bottom: 3px dotted blue;   
+  background-color: transparent;
+  
+}
+
+.sideauthform {
+  font-size: 80%; /*14pt;*/
+
+}
+
+.tabcolhead {
+  background-color:  #7FFFD4;
+  color: blue;
+}
+
+.loginbar{
+position: absolute;  
+   overflow: auto;  
+  height: 200px;
+  width: 200px;
+   left: 50%;  
+   top: 50%;  
+  background-color: #F0F8FF;
+  border: 1px double blue;
+   margin-left: -100px;  
+   margin-top: -100px;
+  padding-left: 10px;
+  border-spacing: 4px; 
+ 
+}

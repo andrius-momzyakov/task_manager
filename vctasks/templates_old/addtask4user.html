@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Создать заявку {% endblock %}
+{% block content %}
+    {% if form.is_multipart %}
+      <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
+    {% else %}
+      <form method="post" action="">{% csrf_token %}
+    {% endif %}
+    {{ form.as_p }}
+    <input type="submit" value="Заслать" />
+    <input type="reset" value="Сбросить" />
+    </form>
+{% endblock %}
