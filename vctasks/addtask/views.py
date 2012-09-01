@@ -384,6 +384,10 @@ def common_tasklist(request, page_number=None, ):
             status = request.GET.get('status')
     c = {}; all_cols = False
     template_file="common_tasklist.html"
+    # ищем статус и page_number в куки
+    if not status:
+        if request.COOKIES.has_key( 'status' ):
+            status = request.COOKIES['status']
     #Получение номера страницы#           
     if page_number is None:
         if status:
@@ -413,7 +417,7 @@ def common_tasklist(request, page_number=None, ):
     elif status=='not_closed':
         #return HttpResponse('>'+status+'<')
         qs = get_filtered_tasklist(request.user).filter(date_close__isnull=True).exclude(closing_type='P')
-        status_name = u' - ВСЕ ЕЩЁ НЕ ГОТОВЫЕ'
+        status_name = u' - ВСЕ ЕЩЁ НЕ ЗАКРЫТЫЕ'
 
     elif status=='closed':
         qs = get_filtered_tasklist(request.user).\
@@ -441,8 +445,10 @@ def common_tasklist(request, page_number=None, ):
         qs = get_filtered_tasklist(request.user)
     cd=CurDate() #; fi=FilterIndicator()
     c.update(curdate=cd ,status_name=status_name, status=status)
-    return HttpResponse(object_list(request, qs, paginate_by=10, page=p, \
+    response = HttpResponse(object_list(request, qs, paginate_by=10, page=p, \
             template_name=template_file, extra_context=c))
+    response.set_cookie('status', value=status)
+    return response
 
 @login_required
 def task_detail(request, ptask_id):
