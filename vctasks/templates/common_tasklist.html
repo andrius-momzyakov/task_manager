@@ -2,7 +2,7 @@
 
 {% block title %}HelpDesk-Список задач{% endblock %}
 {% block content %}
-    <button onclick="parent.location='/tasklist/'">Все</button>
+    <button onclick="parent.location='/tasklist/?status=None'">Все</button>
     <button onclick="parent.location='/tasklist/?status=new'">Новые</button>
     <button onclick="parent.location='/tasklist/?status=set'">Назначенные</button>
     <button onclick="parent.location='/tasklist/?status=not_open'">Все ещё не в обработке</button>

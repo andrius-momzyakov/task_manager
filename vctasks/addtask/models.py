@@ -4,23 +4,27 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import date
 from django.db.models.fields import BLANK_CHOICE_DASH, BLANK_CHOICE_NONE
+#from django.utils.translation import ugettext, ugettext_lazy as _
 
 # Create your models here.
+
+# 04.12.2012 
+# - init of date_open fileld transferred to views.py 
+# - added verbose_names for models' fields in english 
+#
 
 class IncorrectUserError(Exception):
     pass
 
 class Person(models.Model):
     """
-    доп. сведения о пользователе, выборка по полю login
+    user's profile PK is login
     """
-    # name = models.CharField(max_length=30)
-    second_name = models.CharField(max_length=30, null=True ) # отчество
-    # surname = models.CharField(max_length=30)
-    position = models.CharField(max_length=50) # должность
-    login = models.CharField(max_length=30, unique=True)  # = dbuser !!!
-    location = models.CharField(max_length=30, null=True, blank=True) # адрес-комната
-    phone = models.CharField(max_length=30) # телефон   
+    second_name = models.CharField(verbose_name=u'Фамилия' ,max_length=30, null=True, blank=True ) # отчество
+    position = models.CharField(verbose_name=u'Должность',  max_length=50) # должность
+    login = models.CharField(verbose_name=u'Логин', max_length=30, unique=True)  # = dbuser !!!
+    location = models.CharField(verbose_name=u'Комната', max_length=30, null=True, blank=True) # адрес-комната
+    phone = models.CharField(verbose_name=u'Телефон', max_length=30, null=True, blank=True) # телефон   
 
     def __unicode__(self):
         u = User.objects.get(username=self.login)
@@ -35,27 +39,27 @@ class Task(models.Model):
     YN_CHOISES = (('Y', 'ДА'), ('N','НЕТ'),)
     CLOSING_TYPE = (BLANK_CHOICE_DASH[0], ('C', 'ВЫП'),('D','ОТМЕНА'),('T','ПЕРЕП'), ('P', 'ОТЛОЖ'), )
     
-    name = models.CharField(max_length=240)           # Краткое наименование
-    desc = models.TextField()                         # Описание
-    date_open = models.DateField(default=date.today())   # Дата начала
-    deadline = models.DateField(blank=True, null=True)   # Срок
-    is_supervised = models.CharField(max_length=1, default='N', choices=YN_CHOISES)  # Контрольное? 'Y' или 'N'
-    date_close = models.DateField(blank=True, null=True)   # дата закрытия
-    appoint_date = models.DateField(blank=True, null=True) #дата назначения
-    manager = models.ForeignKey(User, related_name='manager', blank=True, null=True) # , on_delete=models.PROTECT) 
-    start_date = models.DateField(blank=True, null=True) # дата приёма девелопером в работу    
-    responsible = models.ForeignKey(User, related_name='responsible', blank=True, null=True) # , on_delete=models.PROTECT)
-    applicant = models.ForeignKey(User, related_name='applicant', blank=True, null=True) # Заявитель
-    caused_by = models.ForeignKey('self', blank=True, null=True) # Родительская задача
-    base = models.ManyToManyField('Doc', related_name='base', null=True)  # Основание (входящий док.)
-    closing_type = models.CharField(max_length=1, choices=CLOSING_TYPE, blank=True, null=True) # "C"-выполнено "D"-прекращено "T"-перепоручено
-    ready_date = models.DateField(blank=True, null=True) # дата готовности заявки, устанавливаемая девелопером
-    res = models.ManyToManyField('Doc', related_name='res') # Исх. документ
-    module = models.ForeignKey('Module', null=True, blank=True) # ссылка на модуль или тип заявки
-    proj = models.CharField(max_length=100, null=True, blank=True) # путь к проекту - для разовых
-    exe = models.CharField(max_length=100, null=True, blank=True) # путь к exe - для разовых
-    decision = models.TextField(blank=True, null=True) #опциональное поле для описания решения проблемы или ответа на вопрос
-    message_counter = models.IntegerField(default=0)  # Счётчик сообщений - в формах не отражается
+    name = models.CharField(verbose_name=u'Предмет', max_length=240)           # Краткое наименование
+    desc = models.TextField(verbose_name=u'Сообщение')                         # Описание
+    date_open = models.DateField(verbose_name='Дата заявки [дд.мм.гггг]')   # Дата начала
+    deadline = models.DateField(verbose_name=u'Срок [дд.мм.гггг]', blank=True, null=True)   # Срок
+    is_supervised = models.CharField(verbose_name=u'Контрольное', max_length=1, default='N', choices=YN_CHOISES)  # Контрольное? 'Y' или 'N'
+    date_close = models.DateField(verbose_name=u'Дата закрытия [дд.мм.гггг]', blank=True, null=True)   # дата закрытия
+    appoint_date = models.DateField(verbose_name=u'Дата назначения [дд.мм.гггг]', blank=True, null=True) #дата назначения
+    manager = models.ForeignKey(User, verbose_name=u'Менеджер', related_name='manager', blank=True, null=True) # , on_delete=models.PROTECT) 
+    start_date = models.DateField(verbose_name=u'Принято в работу [дд.мм.гггг]', blank=True, null=True) # дата приёма девелопером в работу    
+    responsible = models.ForeignKey(User, verbose_name=u'Ответственный', related_name='responsible', blank=True, null=True) # , on_delete=models.PROTECT)
+    applicant = models.ForeignKey(User, verbose_name=u'Заявитель', related_name='applicant', blank=True, null=True) # Заявитель
+    #caused_by = models.ForeignKey('self', blank=True, null=True) # Родительская задача
+    base = models.ManyToManyField('Doc', verbose_name=u'Документы', related_name='base', null=True)  # Основание (входящий док.)
+    closing_type = models.CharField(verbose_name=u'Признак закрытия', max_length=1, choices=CLOSING_TYPE, blank=True, null=True) # "C"-выполнено "D"-прекращено "T"-перепоручено
+    ready_date = models.DateField(verbose_name=u'Готово [дд.мм.гггг]', blank=True, null=True) # дата готовности заявки, устанавливаемая девелопером
+    #res = models.ManyToManyField('Doc', related_name='res') # Исх. документ
+    module = models.ForeignKey('Module', verbose_name=u'Модуль', null=True, blank=True) # ссылка на модуль или тип заявки
+    proj = models.CharField(max_length=100, verbose_name=u'Путь к документации', null=True, blank=True) # путь к проекту - для разовых
+    exe = models.CharField(max_length=100, verbose_name=u'Путь к сборке', null=True, blank=True) # путь к exe - для разовых
+    decision = models.TextField(verbose_name=u'Решение', blank=True, null=True) #опциональное поле для описания решения проблемы или ответа на вопрос
+    #message_counter = models.IntegerField(default=0)  # Счётчик сообщений - в формах не отражается
     
     def _is_supervised(self):
         if self.is_supervised=='Y':
@@ -192,15 +196,15 @@ class Doc(models.Model):
 
     def __unicode__(self):
         if self.reg_tag!=None: 
-            tmp = self.reg_tag + ' от ' + self.reg_date.strftime("%d/%m/%Y")
+            tmp = self.reg_tag + u' от ' + self.reg_date.strftime("%d/%m/%Y")
         else:
-            tmp = 'от ' + self.reg_date.strftime("%d/%m/%Y")  
+            tmp = u'от ' + self.reg_date.strftime("%d/%m/%Y")  
         if (self.ext_reg_date==None):
             return u'%s' % tmp
         else:
-            return u'%s' % (tmp + ' (' + 
-                self.ext_reg_tag + ' от ' +  
-                self.ext_reg_date.strftime("%d/%m/%Y") + ')')
+            return u'%s' % (tmp + u' (' + 
+                self.ext_reg_tag + u' от ' +  
+                self.ext_reg_date.strftime("%d/%m/%Y") + u')')
     def quote_file(self):
         """
         переводит имя файла в предст-е ascii
@@ -222,7 +226,7 @@ class Module(models.Model):
     status =  models.CharField(max_length=1, default='C', choices=MODULE_STATUS) # статус модуля
     comment = models.TextField(null=True, blank=True) # комментарий к статусу
     parent = models.ForeignKey('self', null=True, blank=True) # головной модуль
-    dev = models.ManyToManyField('Person', related_name='dev')
+    dev = models.ManyToManyField('Разработчик', related_name='dev')
 #    proj = models.FilePathField(path=u"\\\\vc-host\\voda\\ISHVFP6", \
 #                                recursive=True, null=True, blank=True) # путь к проекту
     proj = models.CharField(max_length=100, null=True, blank=True) # путь к проекту

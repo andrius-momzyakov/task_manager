@@ -25,12 +25,15 @@ from django.core.urlresolvers import reverse
 from datetime import date
 from django.core.files import File
 from django.core.servers.basehttp import FileWrapper
-from vctasks.addtask.forms import SetFilterForm, ExecuteTaskForm, AppointTaskForm,AddTaskForm, AddFileForm, TaskForm
+from vctasks.addtask.forms import SetFilterForm, ExecuteTaskForm, AppointTaskForm,AddTaskForm,\
+                                  AddFileForm, TaskForm, TaskFormManager, TaskFormCustomer
 from django.db.models import Q
 
 import settings
 
 from vctasks.secutil import get_task, get_task_filtered, get_filtered_tasklist, InvalidTaskId, TaskAccessDenied, TaskNotExists
+
+# 04.12.2012 - перенос инициализации даты откр-я из models во views
 
 @login_required
 def find_task(request):
@@ -334,10 +337,14 @@ def add_task_form(request, ptask_id=None):
     c = {}
     c.update(csrf(request))
     if request.method=="POST":
-        if request.user.is_superuser or \
-            request.user.groups.filter(name="manager"): # могут смотреть и менять всё
+        if request.user.is_superuser: # могут смотреть и менять всё
             return edit_task(request, ptask_id)
-        # иначе - ели не манагер    
+        if request.user.groups.filter(name="manager"): # могут смотреть и менять всё
+                                                       # кроме ссылки на себя
+            return edit_task(request, ptask_id, role='manager')
+        # иначе - если не манагер    
+        if request.user.groups.filter(name="customer"): 
+            return edit_task(request, ptask_id, role='customer')
         form = AddTaskForm(request.POST)
         if form.is_valid():
             
@@ -360,14 +367,20 @@ def add_task_form(request, ptask_id=None):
                 return HttpResponse(u'Не существует Заявки. Заявка № ' + request.POST['id'] + u' не найдена.')
             except TaskAccessDenied:
                 return HttpResponse(u'Недостаточно прав для открытия заявки.')  
-            if request.user.is_superuser or \
-                request.user.groups.filter(name="manager"): # могут смотреть и менять всё
+            if request.user.is_superuser: 
                 return edit_task(request, ptask_id)
+            if request.user.groups.filter(name="manager"): # могут смотреть и менять всё
+                return edit_task(request, ptask_id, role='manager')
+            if request.user.groups.filter(name="customer"): 
+                return edit_task(request, ptask_id, role='customer')
             form = AddTaskForm({'id':task.id, 'name':task.name, 'desc':task.desc})
         else: 
-            if request.user.is_superuser or \
-                request.user.groups.filter(name="manager"): # могут смотреть и менять всё
+            if request.user.is_superuser: 
                 return edit_task(request, ptask_id)
+            if request.user.groups.filter(name="manager"): # могут смотреть и менять всё
+                return edit_task(request, ptask_id, role='manager')
+            if request.user.groups.filter(name="customer"): 
+                return edit_task(request, ptask_id, role='customer')
             form = AddTaskForm()
     return render_to_response('addtask4user.html', {'form':form, 'curdate':CurDate()},  \
             context_instance=RequestContext(request, c))
@@ -502,15 +515,21 @@ def task_detail(request, ptask_id):
             else:
               # клиент может только своё и только в статусе new
                #pass
-               if st=='new' and \
-                  (task.applicant.id==User.objects.get(username=request.user.username).id):
-                  
+               #if st=='new' and \
+               if   (task.applicant==request.user):
+                  if st=='new':
+                      return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
+                                                        template_name="task_detail.html", \
+                                                        extra_context={"curdate":CurDate(), \
+                                                        "header":'Задача '+ str(task_id)+ ' сохранена.',\
+                                                        "appoint_date":task.appoint_date,
+                                                        "files":files, "short_edit":'Y'}))
                   return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
                                                     template_name="task_detail.html", \
                                                     extra_context={"curdate":CurDate(), \
                                                     "header":'Задача '+ str(task_id)+ ' сохранена.',\
                                                     "appoint_date":task.appoint_date,
-                                                    "files":files, "short_edit":'Y'}))
+                                                    "files":files}))
                else:
                   return render_to_response("error.html", {"curdate":CurDate(),
                                             "message":'Недостаточно прав.'}, \
@@ -526,10 +545,11 @@ def task_detail(request, ptask_id):
     # если не назначен исполнитель
     if st=='new':
         # чужую - может посмотреть манагер через форму назначения
-        if request.user.is_superuser or \
-            request.user.groups.filter(name="manager"):
+        if request.user.is_superuser:
+            return edit_task(request, task_id)
+        if request.user.groups.filter(name="manager"):
             #return redirect('/appointtask/' + str(task_id) + '/')
-            return edit_task(request, task_id) #redirect('/edittask/' + str(task_id) + '/')
+            return edit_task(request, task_id, role='manager') #redirect('/edittask/' + str(task_id) + '/')
         # свою заявку можно редактировать свободно
         if task.applicant.id==User.objects.get(username=request.user.username).id:
             #return HttpResponse('Почему')
@@ -539,9 +559,10 @@ def task_detail(request, ptask_id):
     # если заявка открыта или ожидает закрытия
     if st in ('set', 'open', 'ready'):
         # если манагер - то можно отредактировать назначение
-        if request.user.is_superuser or \
-            request.user.groups.filter(name="manager"):
-            return edit_task(request, task_id) #            return redirect('/appointtask/' + str(task_id) +'/')
+        if request.user.is_superuser:
+            return edit_task(request, task_id)
+        if request.user.groups.filter(name="manager"):
+            return edit_task(request, task_id, role='manager') #            return redirect('/appointtask/' + str(task_id) +'/')
         # если открыта исполнителем - не манагером
         if task.responsible.id==User.objects.get(username=request.user.username).id:
             return redirect('/executetask/' + str(task_id) + '/')
@@ -556,9 +577,10 @@ def task_detail(request, ptask_id):
     # если заявка закрыта
     if st in ('closed', 'pending'):
         # манагер может переназначить и изменить статус
-        if request.user.is_superuser or \
-            request.user.groups.filter(name="manager"):
+        if request.user.is_superuser:
             return edit_task(request, task_id) #            return redirect('/appointtask/' + str(task_id) +'/')
+        if request.user.groups.filter(name="manager"):
+            return edit_task(request, task_id, role='manager') #            return redirect('/appointtask/' + str(task_id) +'/')
         # заявитель и исполнитель могут смотреть детали заявки
         # каждый своей заявки
         if task.responsible.id==User.objects.get(username=request.user.username).id or \
@@ -571,10 +593,21 @@ def task_detail(request, ptask_id):
                     "files":files}))
             
 @login_required
-def edit_task(request, ptask_id=None):
+def edit_task(request, ptask_id=None, **kwargs):
     """
     редактирование задачи для манагера и Супера
     """
+    is_manager = False
+    is_customer = False
+    role = None
+    try:
+      role = kwargs.pop('role')
+      if role=='manager':
+        is_manager = True
+      if role=='customer':
+        is_customer = True
+    except:
+      None
     #if ptask_id is None:
         #return HttpResponse(u'Не указан task_id.')
     task_id = ptask_id
@@ -594,7 +627,32 @@ def edit_task(request, ptask_id=None):
     c.update(csrf(request))
     if request.method=='GET':
         if task_id:
-            form = TaskForm({'id':task_id,
+            if is_manager:
+                form = TaskFormManager({'id':task_id,
+                        'name':task.name,
+                        'desc':task.desc,
+                        'date_open':task.date_open,
+                        'start_date':task.start_date,
+                        'module':task.module,
+                        #'manager':task.manager,
+                        'applicant':task.applicant,
+                        'responsible':task.responsible,
+                        'appoint_date':task.appoint_date,
+                        'deadline':task.deadline,
+                        'is_supervised':task.is_supervised,
+                        'ready_date':task.ready_date,
+                        'proj':task.proj,
+                        'exe':task.exe,
+                        'closing_type':task.closing_type,
+                        'date_close':task.date_close,
+                        'decision':task.decision,
+                        })
+            elif is_customer:
+                form = TaskFormCustomer({'id':task_id,
+                        'name':task.name,
+                        'desc':task.desc})  
+            else:
+                form = TaskForm({'id':task_id,
                         'name':task.name,
                         'desc':task.desc,
                         'date_open':task.date_open,
@@ -614,49 +672,47 @@ def edit_task(request, ptask_id=None):
                         'decision':task.decision,
                         })
         else: 
-            form = TaskForm()
-    else: 
-       form=TaskForm(request.POST)
+            if is_manager:
+                form = TaskFormManager({'date_open':date.today()})
+            elif is_customer:
+                form = TaskFormCustomer()
+            else:
+                form = TaskForm({'date_open':date.today()})
+    else: # POST
+       if is_manager:
+           form = TaskFormManager(request.POST)
+       elif is_customer:
+           form = TaskFormCustomer(request.POST)
+       else:           
+           form=TaskForm(request.POST)
        if form.is_valid():
-              if task_id and task: # существующая заявка
+              task = form.save(commit=False)
+              if not task.closing_type and task.date_close and task.responsible:
+                  task.closing_type = 'C'
+              if task_id:
                   task.id = task_id
-                  task.applicant = form.cleaned_data['applicant']
-              else: # новая заявка
-                  task=m.Task()
-                  task.id = form.cleaned_data['id']    
-                  task.applicant = User.objects.get(username=request.user.username)
-              task.name = form.cleaned_data['name']
-              task.desc = form.cleaned_data['desc']
-              task.date_open = form.cleaned_data['date_open']
-              task.start_date = form.cleaned_data['start_date']
-              #old_responsible = task.responsible 
-              task.module = form.cleaned_data['module']
-              task.ready_date = form.cleaned_data['ready_date']
-              task.proj = form.cleaned_data['proj']
-              task.exe = form.cleaned_data['exe']
-              task.manager = form.cleaned_data['manager']
-              task.responsible = form.cleaned_data['responsible']
-              task.date_close = form.cleaned_data['date_close']
-              task.closing_type = form.cleaned_data['closing_type']
-              task.decision = form.cleaned_data['decision']
-              #if not task.responsible:
-                # если отсутствует ответственный чистим дату назначения
-                # и остальные
-              #  task.appoint_date = None
-              #  task.start_date = None
-              #  task.ready_date = None
-              #  task.date_close = None
-              #  if task.closing_type!='P':
-              #    task.closing_type = None
-              #elif task.responsible != old_responsible:
-              #  # если изменен ответственный, меняется дата назначения
-              #  task.appoint_date = date.today()
-              #  # и чистятся вехи
-              #  task.start_date = None
-              #  task.ready_date = None
-              #  task.date_close = None
-              #  if task.closing_type!='P':
-              #    task.closing_type = None
+                  if is_customer:
+                    try:
+                      task_temp = m.Task.objects.get(pk=task_id)
+                      if not (task_temp.responsible or task_temp.manager):
+                        if task_temp.applicant:
+                          task.applicant = task_temp.applicant
+                        else:
+                          task.applicant = request.applicant
+                      else:
+                        return render_to_response("error.html", {"curdate":CurDate(),
+                                            "message":'Нельзя изменять заявку, принятую в работу.'}, \
+                                            context_instance=RequestContext(request))
+                        
+                    except:
+                      task.applicant = request.user
+                  #task.applicant = form.cleaned_data['applicant']
+              else:
+                  task.applicant = request.user
+              if is_manager and not task.manager:
+                task.manager = request.user
+              if not task.date_open:
+                task.date_open = date.today()
               if not task.appoint_date and task.responsible and task.manager:
                 task.appoint_date = date.today()
               if not task.start_date and task.responsible:
@@ -669,9 +725,10 @@ def edit_task(request, ptask_id=None):
                     task.ready_date = date.today()
                 if not task.date_close:
                   task.date_close = date.today()
-                
-              task.deadline = form.cleaned_data['deadline'] 
-              task.is_supervised = form.cleaned_data['is_supervised' ]
+               
+              if not is_customer:               
+                  task.deadline = form.cleaned_data['deadline'] 
+                  task.is_supervised = form.cleaned_data['is_supervised' ]
               task.save()
               # переход на форму прикрепления файлов
               return redirect('/addfile/?' + 'task_id=' + str(task.id) )

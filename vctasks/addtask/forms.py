@@ -13,11 +13,39 @@ from django.contrib.admin.widgets import AdminDateWidget
 from datetime import date
 from django.core.files import File
 from django.core.servers.basehttp import FileWrapper
+from django.forms import ModelForm, Textarea, HiddenInput
 
 import settings
 
-class TaskForm(forms.Form):
+class TaskFormManager(ModelForm):
+  is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
+  class Meta:
+    model = m.Task
+    fields = ('name', 'desc', 'date_open', 'start_date', 'applicant', 'module', \
+              'responsible', 'appoint_date', 'deadline', 'is_supervised', 'ready_date', 'decision',\
+              'proj', 'exe', 'closing_type', 'date_close')
+    
+class TaskForm(ModelForm):    
+  is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
+  class Meta:
+    model = m.Task
+    fields = ('name', 'desc', 'date_open', 'start_date', 'applicant', 'module', 'manager', \
+              'responsible', 'appoint_date', 'deadline', 'is_supervised', 'ready_date', 'decision',\
+              'proj', 'exe', 'closing_type', 'date_close')
+    #exclude = ('base', 'message_counter')
+
+class TaskFormCustomer(ModelForm):    
+  #is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
+  #date_open = forms.DateField(initial=date.today())
+  class Meta:
+    model = m.Task
+    fields = ('name', 'desc', )
+
+
+    
+class TaskForm_save(forms.Form):
     """
+    For Superusers only!!!
     Общая форма ред-я задачи без прикрепления файлов
     """
     id = forms.IntegerField(label='', widget=forms.widgets.HiddenInput, required=False, initial=None)
