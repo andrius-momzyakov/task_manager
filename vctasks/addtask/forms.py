@@ -13,7 +13,7 @@ from django.contrib.admin.widgets import AdminDateWidget
 from datetime import date
 from django.core.files import File
 from django.core.servers.basehttp import FileWrapper
-from django.forms import ModelForm, Textarea, HiddenInput
+from django.forms import Form, ModelForm, Textarea, HiddenInput
 
 import settings
 
@@ -41,7 +41,16 @@ class TaskFormCustomer(ModelForm):
     model = m.Task
     fields = ('name', 'desc', )
 
-
+class TaskSearchForm(Form):
+  from_date_open = forms.DateField(label='Дата открытия с:', required=False)
+  to_date_open = forms.DateField(label='Дата открытия по:', required=False)
+  eq_date_open = forms.BooleanField(label='Равно', required=False) # Checkbox
+  name = forms.CharField(max_length=240, label='Предмет обращения', required=False)
+  desc = forms.CharField(max_length=240, label='Текст обращения', required=False)
+  
+class ChangePasswordForm(Form):
+  old_password = forms.CharField(label='Введите старый пароль', widget=forms.PasswordInput)
+  new_password = forms.CharField(label='Введите новый пароль', min_length=6, widget=forms.PasswordInput) 
     
 class TaskForm_save(forms.Form):
     """

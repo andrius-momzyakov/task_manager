@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Найти заявки{% endblock %}
+{% block content %}
+    <h2>Найти заявки</h2>
+    {% if form.is_multipart %}
+      <form enctype="multipart/form-data" method="post" action="/edit_task/{{task}}">{% csrf_token %}
+    {% else %}
+      <form method="post" action="">{% csrf_token %}
+    {% endif %}
+    <table>
+    {% for field in form%}
+    <tr>
+    <td>{{ field.label_tag }}</td><td>{{ field }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <input type="submit" value="Далее" />
+    <input type="reset" value="Сбросить" />
+    </form>
+{% endblock %}

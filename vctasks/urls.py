@@ -38,7 +38,9 @@ urlpatterns = patterns('',
     (r'^edit_task/(\d+)/$', vctasks.addtask.views.edit_task),
     (r'^taskdetail/(\d+)/$', vctasks.addtask.views.task_detail),
     (r'^file/$', vctasks.addtask.views.serve_base_file),
-    (r'^findtask/$', vctasks.addtask.views.find_task)
+    (r'^findtask/$', vctasks.addtask.views.find_task), # by ID
+    (r'^search_form/$', vctasks.addtask.views.search_form),
+    (r'^change_password/$', vctasks.addtask.views.change_password),
 	
 #    (r'^file/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'c:/media/'}),
 

@@ -26,7 +26,8 @@ from datetime import date
 from django.core.files import File
 from django.core.servers.basehttp import FileWrapper
 from vctasks.addtask.forms import SetFilterForm, ExecuteTaskForm, AppointTaskForm,AddTaskForm,\
-                                  AddFileForm, TaskForm, TaskFormManager, TaskFormCustomer
+                                  AddFileForm, TaskForm, TaskFormManager, TaskFormCustomer,\
+                                  TaskSearchForm, ChangePasswordForm
 from django.db.models import Q
 
 import settings
@@ -386,34 +387,52 @@ def add_task_form(request, ptask_id=None):
             context_instance=RequestContext(request, c))
 
 @login_required
-def common_tasklist(request, page_number=None, ):
+def common_tasklist(request, page_number=None, p_qs=None):
     """
     Список задач для всех пользователей
+    p_qs - query set, передаваемый из обработчика формы фильтра
     """
     # проверяем, передан ли требуемый статус
     status = None
-    if request.method=="GET":
+    
+    if p_qs:
+      status = 'filter'
+
+    if request.method=="GET" and not status:
         if request.GET.get('status'):
             status = request.GET.get('status')
-    c = {}; all_cols = False
-    template_file="common_tasklist.html"
+            
     # ищем статус и page_number в куки
     if not status:
         if request.COOKIES.has_key( 'status' ):
             status = request.COOKIES['status']
+
+    if not p_qs and status=='filter':
+        status=''
+      
+    c = {}; all_cols = False
+    template_file="common_tasklist.html"
     #Получение номера страницы#           
     if page_number is None:
-        if status:
-            return redirect('/tasklist/1/?status=' + status)
-        return redirect('/tasklist/1/')
-    try:
+      if status and status!='filter':
+          return redirect('/tasklist/1/?status=' + status)
+      #return redirect('/tasklist/1/')
+      p = 1
+    else:
+      try:
         p = int(page_number)
-    except ValueError:
+      except ValueError:
         p = 1
+    
     # формирование QuerySet и контекста
     c.update(all_cols=True)
     qs = []; status_name = u' - ВСЕ'
-    if status=='new':
+    if status=='filter':
+        ls = list(set(p_qs).intersection(set(get_filtered_tasklist(request.user))))
+        qs = m.Task.objects.filter(pk__in=[li.id for li in ls]) # lambda?
+        status_name = u' - Фильтр задан пользователем'
+        
+    elif status=='new':
         qs = get_filtered_tasklist(request.user).filter(responsible__isnull=True).exclude(closing_type='P')
         status_name = u' - НОВЫЕ'
 
@@ -513,34 +532,41 @@ def task_detail(request, ptask_id):
                                             context_instance=RequestContext(request))
                
             else:
-              # клиент может только своё и только в статусе new
-               #pass
-               #if st=='new' and \
-               if   (task.applicant==request.user):
-                  if st=='new':
-                      return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
-                                                        template_name="task_detail.html", \
-                                                        extra_context={"curdate":CurDate(), \
-                                                        "header":'Задача '+ str(task_id)+ ' сохранена.',\
-                                                        "appoint_date":task.appoint_date,
-                                                        "files":files, "short_edit":'Y'}))
+              # Клиент и девелопер видят только свои задачки
+              if task.applicant==request.user and task.responsible!=request.user: 
+                # Клиент не может редактировать, если у задачки есть манагер или ответственный (не он сам)
+                if (task.manager or task.responsible) :
                   return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
                                                     template_name="task_detail.html", \
                                                     extra_context={"curdate":CurDate(), \
                                                     "header":'Задача '+ str(task_id)+ ' сохранена.',\
                                                     "appoint_date":task.appoint_date,
                                                     "files":files}))
-               else:
-                  return render_to_response("error.html", {"curdate":CurDate(),
-                                            "message":'Недостаточно прав.'}, \
-                                            context_instance=RequestContext(request))
-                    
-            return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
-                    template_name="task_detail.html", \
-                    extra_context={"curdate":CurDate(), \
-                    "header":'Задача '+ str(task_id)+ ' сохранена.',\
-                    "appoint_date":task.appoint_date,
-                    "files":files}))
+                else:
+                  return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
+                                                    template_name="task_detail.html", \
+                                                    extra_context={"curdate":CurDate(), \
+                                                    "header":'Задача '+ str(task_id)+ ' сохранена.',\
+                                                    "appoint_date":task.appoint_date,
+                                                    "files":files, "short_edit":'Y'}))
+                  
+              elif task.responsible==request.user:
+                #  Девелопер может смотреть и редактировать только свои ещё не закрытые задачки             
+                if task.status!='closed':
+                  return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
+                                                    template_name="task_detail.html", \
+                                                    extra_context={"curdate":CurDate(), \
+                                                    "header":'Задача '+ str(task_id)+ ' сохранена.',\
+                                                    "appoint_date":task.appoint_date,
+                                                    "files":files, "short_edit":'Y'}))
+                else: # закрытые - только просмотр
+                  return HttpResponse(object_detail(request, queryset=qs, object_id=task_id, \
+                                                    template_name="task_detail.html", \
+                                                    extra_context={"curdate":CurDate(), \
+                                                    "header":'Задача '+ str(task_id)+ ' сохранена.',\
+                                                    "appoint_date":task.appoint_date,
+                                                    "files":files}))
+                  
     # POST - часть
     # если не назначен исполнитель
     if st=='new':
@@ -738,8 +764,54 @@ def edit_task(request, ptask_id=None, **kwargs):
     return render_to_response('edit_task.html', {'form':form, 'curdate':CurDate(), 'task_id':task_id, 'curdate':curdate},   \
             context_instance=RequestContext(request, c))
     
+@login_required
+def search_form(request):
+  if request.method=='POST':
+    form = TaskSearchForm(request.POST)
+    search_string = '1=1'
+    if form.is_valid():
+      if form.cleaned_data['name']:
+        search_string += " and upper(name) like %s"
+        param = form.cleaned_data['name'].upper()
+        if param[:1]!='%':
+          param = '%' + param
+        if param[len(param)-1:]!='%':
+          param += '%'
+        qs = m.Task.objects.extra(where=[search_string], params=[param])
+        #return HttpResponse(qs)
+        return common_tasklist(request, None, qs)
+        None
+  else: 
+    form = TaskSearchForm()
+    c = {}
+    c.update(csrf(request))
 
-
+    return render_to_response('search_task.html', {'form':form, 'curdate':CurDate()},
+                               context_instance=RequestContext(request, c))
+    None
+  return HttpResponse('Данная функция находится в разработке.')
+  
+@login_required
+def change_password(request):
+  if request.method=='POST':
+    form = ChangePasswordForm(request.POST)
+    if form.is_valid(): 
+      if request.user.check_password(form.cleaned_data['old_password']):
+        request.user.set_password(form.cleaned_data['new_password'])
+        request.user.save()
+        return render_to_response("error.html", {"curdate":CurDate(),
+                                        "message":'Пароль изменён.'}, \
+                          context_instance=RequestContext(request))
+      else:
+        return render_to_response("error.html", {"curdate":CurDate(),
+                                        "message":'Вы указали неверный пароль.'}, \
+                          context_instance=RequestContext(request))
+  form = ChangePasswordForm()
+  c = {}
+  c.update(csrf(request))
+  return render_to_response('change_password.html', {'form':form, 'curdate':CurDate()},
+                               context_instance=RequestContext(request, c))
+      
 def my_logout(request):
     from django.contrib.auth import logout
     logout(request)
