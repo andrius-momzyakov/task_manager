@@ -21,7 +21,7 @@ class TaskFormManager(ModelForm):
   is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
   class Meta:
     model = m.Task
-    fields = ('name', 'desc', 'date_open', 'start_date', 'applicant', 'module', \
+    fields = ('name', 'descr', 'date_open', 'start_date', 'applicant', 'module', \
               'responsible', 'appoint_date', 'deadline', 'is_supervised', 'ready_date', 'decision',\
               'proj', 'exe', 'closing_type', 'date_close')
     
@@ -29,7 +29,7 @@ class TaskForm(ModelForm):
   is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
   class Meta:
     model = m.Task
-    fields = ('name', 'desc', 'date_open', 'start_date', 'applicant', 'module', 'manager', \
+    fields = ('name', 'descr', 'date_open', 'start_date', 'applicant', 'module', 'manager', \
               'responsible', 'appoint_date', 'deadline', 'is_supervised', 'ready_date', 'decision',\
               'proj', 'exe', 'closing_type', 'date_close')
     #exclude = ('base', 'message_counter')
@@ -39,17 +39,17 @@ class TaskFormCustomer(ModelForm):
   #date_open = forms.DateField(initial=date.today())
   class Meta:
     model = m.Task
-    fields = ('name', 'desc', )
+    fields = ('name', 'descr', )
 
 class TaskSearchForm(Form):
   from_date_open = forms.DateField(label='Дата открытия с:', required=False)
   to_date_open = forms.DateField(label='Дата открытия по:', required=False)
   eq_date_open = forms.BooleanField(label='Равно', required=False) # Checkbox
   name = forms.CharField(max_length=240, label='Предмет обращения', required=False)
-  desc = forms.CharField(max_length=240, label='Текст обращения', required=False)
+  descr = forms.CharField(max_length=240, label='Текст обращения', required=False)
   
 class ChangePasswordForm(Form):
-  old_password = forms.CharField(label='Введите старый пароль', widget=forms.PasswordInput)
+  old_password = forms.CharField(label='Введите старый паороль', widget=forms.PasswordInput)
   new_password = forms.CharField(label='Введите новый пароль', min_length=6, widget=forms.PasswordInput) 
     
 class TaskForm_save(forms.Form):
@@ -59,7 +59,7 @@ class TaskForm_save(forms.Form):
     """
     id = forms.IntegerField(label='', widget=forms.widgets.HiddenInput, required=False, initial=None)
     name = forms.CharField(max_length=240, label="Предмет обращения")      # Краткое наименование
-    desc = forms.CharField(widget=forms.Textarea, label="Текст обращения") # Описание
+    descr = forms.CharField(widget=forms.Textarea, label="Текст обращения") # Описание
     date_open = forms.DateField(label='Открыто [дд.мм.гггг]', initial=date.today())
     start_date = forms.DateField(label='Принято в работу [дд.мм.гггг]', required=False, initial=date.today())
     applicant = forms.ModelChoiceField(label='Заявитель', queryset=User.objects.filter(is_active=True), required=False) 
@@ -134,7 +134,7 @@ class AddTaskForm(forms.Form):
     """
     id = forms.IntegerField(label='', widget=forms.widgets.HiddenInput, required=False, initial=None)
     name = forms.CharField(max_length=240, label="Предмет обращения")      # Краткое наименование
-    desc = forms.CharField(widget=forms.Textarea, label="Текст обращения") # Описание
+    descr = forms.CharField(widget=forms.Textarea, label="Текст обращения") # Описание
 #   перенесено в отдельную форму дляя р-ции отношения N-N :
 #    attachment = forms.FileField(label="Файл", required=False) 
     

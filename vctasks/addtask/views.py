@@ -351,7 +351,7 @@ def add_task_form(request, ptask_id=None):
             
             task = m.Task(id=form.cleaned_data['id'], \
                           name=form.cleaned_data['name'], \
-                          desc=form.cleaned_data['desc'])
+                          descr=form.cleaned_data['desc'])
             task.applicant = User.objects.get(username=request.user.username)
             task.save()
             # переход на форму прикрепления файлов
@@ -374,7 +374,7 @@ def add_task_form(request, ptask_id=None):
                 return edit_task(request, ptask_id, role='manager')
             if request.user.groups.filter(name="customer"): 
                 return edit_task(request, ptask_id, role='customer')
-            form = AddTaskForm({'id':task.id, 'name':task.name, 'desc':task.desc})
+            form = AddTaskForm({'id':task.id, 'name':task.name, 'descr':task.descr})
         else: 
             if request.user.is_superuser: 
                 return edit_task(request, ptask_id)
@@ -656,7 +656,7 @@ def edit_task(request, ptask_id=None, **kwargs):
             if is_manager:
                 form = TaskFormManager({'id':task_id,
                         'name':task.name,
-                        'desc':task.desc,
+                        'descr':task.descr,
                         'date_open':task.date_open,
                         'start_date':task.start_date,
                         'module':task.module,
@@ -676,11 +676,11 @@ def edit_task(request, ptask_id=None, **kwargs):
             elif is_customer:
                 form = TaskFormCustomer({'id':task_id,
                         'name':task.name,
-                        'desc':task.desc})  
+                        'descr':task.descr})  
             else:
                 form = TaskForm({'id':task_id,
                         'name':task.name,
-                        'desc':task.desc,
+                        'descr':task.descr,
                         'date_open':task.date_open,
                         'start_date':task.start_date,
                         'module':task.module,
@@ -769,18 +769,22 @@ def search_form(request):
   if request.method=='POST':
     form = TaskSearchForm(request.POST)
     search_string = '1=1'
+    params = []
     if form.is_valid():
-      if form.cleaned_data['name']:
-        search_string += " and upper(name) like %s"
-        param = form.cleaned_data['name'].upper()
-        if param[:1]!='%':
-          param = '%' + param
-        if param[len(param)-1:]!='%':
-          param += '%'
-        qs = m.Task.objects.extra(where=[search_string], params=[param])
-        #return HttpResponse(qs)
-        return common_tasklist(request, None, qs)
-        None
+      for item in form.cleaned_data:
+        if item in ('name', 'descr'):
+           if form.cleaned_data[item]:
+             search_string += " and upper(" + item + ") like %s"
+             params.append(form.cleaned_data[item].upper())
+             
+      #return HttpResponse(search_string % tuple(params))
+      for i in range(len(params)):
+        if params[i][:1]!='%':
+          params[i] = '%' + params[i]
+        if params[i][len(params[i])-1:]!='%':
+          params[i] += '%'
+      qs = m.Task.objects.extra(where=[search_string], params=params)
+      return common_tasklist(request, None, qs)
   else: 
     form = TaskSearchForm()
     c = {}
