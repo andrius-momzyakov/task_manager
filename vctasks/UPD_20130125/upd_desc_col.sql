@@ -1,0 +1,1 @@
+﻿alter table addtask_task rename column desc to descr;
