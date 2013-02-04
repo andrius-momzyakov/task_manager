@@ -21,17 +21,17 @@ class TaskFormManager(ModelForm):
   is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
   class Meta:
     model = m.Task
-    fields = ('name', 'descr', 'date_open', 'start_date', 'applicant', 'module', \
+    fields = ('name', 'descr', 'urgent_important', 'date_open', 'start_date', 'applicant', 'module', \
               'responsible', 'appoint_date', 'deadline', 'is_supervised', 'ready_date', 'decision',\
-              'proj', 'exe', 'closing_type', 'date_close')
+              'proj', 'exe', 'closing_type', 'date_close', 'category')
     
 class TaskForm(ModelForm):    
   is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
   class Meta:
     model = m.Task
-    fields = ('name', 'descr', 'date_open', 'start_date', 'applicant', 'module', 'manager', \
+    fields = ('name', 'descr', 'urgent_important', 'date_open', 'start_date', 'applicant', 'module', 'manager', \
               'responsible', 'appoint_date', 'deadline', 'is_supervised', 'ready_date', 'decision',\
-              'proj', 'exe', 'closing_type', 'date_close')
+              'proj', 'exe', 'closing_type', 'date_close', 'category')
     #exclude = ('base', 'message_counter')
 
 class TaskFormCustomer(ModelForm):    

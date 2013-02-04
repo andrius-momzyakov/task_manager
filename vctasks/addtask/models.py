@@ -17,9 +17,9 @@ class IncorrectUserError(Exception):
     pass
 
 class Person(models.Model):
-    """
+    '''
     user's profile PK is login
-    """
+    '''
     second_name = models.CharField(verbose_name=u'Фамилия' ,max_length=30, null=True, blank=True ) # отчество
     position = models.CharField(verbose_name=u'Должность',  max_length=50) # должность
     login = models.CharField(verbose_name=u'Логин', max_length=30, unique=True)  # = dbuser !!!
@@ -34,10 +34,21 @@ class Person(models.Model):
     #class Meta:
       #unique_together = ('name', 'second_name', 'surname') # Если повторяются, 
       # использовать цифровой индекс с фамилией
+      
+class TaskCategory(models.Model):
+    '''
+    категории задач
+    '''
+    name = models.CharField(verbose_name='Имя категории', max_length=80)
+    
+    def __unicode__(self):
+        return self.name
 
 class Task(models.Model):
     YN_CHOISES = (('Y', 'ДА'), ('N','НЕТ'),)
     CLOSING_TYPE = (BLANK_CHOICE_DASH[0], ('C', 'ВЫП'),('D','ОТМЕНА'),('T','ПЕРЕП'), ('P', 'ОТЛОЖ'), )
+    # 03.02.2012
+    URGENT_IMPORTANT = (('A', 'Важно и срочно'),('B','Важно'),('С','Срочно'),('D','Неважно и несрочно'))
     
     name = models.CharField(verbose_name=u'Предмет', max_length=240)           # Краткое наименование
     descr = models.TextField(verbose_name=u'Сообщение')                         # Описание
@@ -58,6 +69,10 @@ class Task(models.Model):
     exe = models.CharField(max_length=100, verbose_name=u'Путь к документации', null=True, blank=True) # путь к exe - для разовых
     decision = models.TextField(verbose_name=u'Решение', blank=True, null=True) #опциональное поле для описания решения проблемы или ответа на вопрос
     #message_counter = models.IntegerField(default=0)  # Счётчик сообщений - в формах не отражается
+    # 03.02.2013 Eisenhower's matrix
+    urgent_important = models.CharField(verbose_name='Важно-срочно', max_length=1, default='D', choices=URGENT_IMPORTANT)
+    # 03.02.2013
+    category = models.ManyToManyField('TaskCategory', verbose_name='Категории', null=True, blank=True)
     
     def _is_supervised(self):
         if self.is_supervised=='Y':
@@ -180,6 +195,8 @@ class Task(models.Model):
         return Task.dmy_date(self.start_date)
     def dmy_ready_date(self):
         return Task.dmy_date(self.ready_date)
+    def get_urgent_important(self):
+        return [val for key, val in dict(self.URGENT_IMPORTANT).iteritems() if key==self.urgent_important][0]
 
         
 class Doc(models.Model):

@@ -672,6 +672,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                         'closing_type':task.closing_type,
                         'date_close':task.date_close,
                         'decision':task.decision,
+                        'category':task.category,
                         })
             elif is_customer:
                 form = TaskFormCustomer({'id':task_id,
@@ -696,6 +697,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                         'closing_type':task.closing_type,
                         'date_close':task.date_close,
                         'decision':task.decision,
+                        'category':task.category,
                         })
         else: 
             if is_manager:
