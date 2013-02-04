@@ -9,8 +9,8 @@
 
 <tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Важно-срочно:</td><td>{{ object.get_urgent_important }}</td></tr>
 <tr><td class="tabcolhead" border="4" align='center' bgcolor='green'>Категории</td><td>
-{% for cat in object.catgegories  %}
-   {{ cat }}<br>
+{% for item in object.category.all %}
+   {{ item }}<br>
 {% endfor %}
 </td></tr>
 
