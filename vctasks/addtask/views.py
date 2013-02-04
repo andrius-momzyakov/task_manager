@@ -672,7 +672,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                         'closing_type':task.closing_type,
                         'date_close':task.date_close,
                         'decision':task.decision,
-                        'category':task.category,
+                        'category':task.category.all(),
                         })
             elif is_customer:
                 form = TaskFormCustomer({'id':task_id,
@@ -697,7 +697,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                         'closing_type':task.closing_type,
                         'date_close':task.date_close,
                         'decision':task.decision,
-                        'category':task.category,
+                        'category':task.category.all(),
                         })
         else: 
             if is_manager:
@@ -757,7 +757,9 @@ def edit_task(request, ptask_id=None, **kwargs):
               if not is_customer:               
                   task.deadline = form.cleaned_data['deadline'] 
                   task.is_supervised = form.cleaned_data['is_supervised' ]
-              task.save()
+              task.category.through.objects.all().delete()
+              for category in m.TaskCategory.objects.filter(pk__in=request.POST.getlist('category')):
+                task.category.add(category)
               # переход на форму прикрепления файлов
               return redirect('/addfile/?' + 'task_id=' + str(task.id) )
        else: return HttpResponse('Форма не айс!')
@@ -841,4 +843,3 @@ def home_page(request):
     
 
             
-
