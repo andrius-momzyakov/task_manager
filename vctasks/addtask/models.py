@@ -45,10 +45,10 @@ class TaskCategory(models.Model):
         return self.name
 
 class Task(models.Model):
-    YN_CHOISES = (('Y', 'ДА'), ('N','НЕТ'),)
-    CLOSING_TYPE = (BLANK_CHOICE_DASH[0], ('C', 'ВЫП'),('D','ОТМЕНА'),('T','ПЕРЕП'), ('P', 'ОТЛОЖ'), )
+    YN_CHOISES = (('Y', u'ДА'), ('N',u'НЕТ'),)
+    CLOSING_TYPE = (BLANK_CHOICE_DASH[0], ('C', u'ВЫП'),('D',u'ОТМЕНА'),('T',u'ПЕРЕП'), ('P', u'ОТЛОЖ'), )
     # 03.02.2012
-    URGENT_IMPORTANT = (('A', 'Важно и срочно'),('B','Важно'),('С','Срочно'),('D','Неважно и несрочно'))
+    URGENT_IMPORTANT_MATRIX = (('A', u'Важно и срочно'),('B',u'Важно'),('C',u'Срочно'),('D',u'Неважно и несрочно'),)
     
     name = models.CharField(verbose_name=u'Предмет', max_length=240)           # Краткое наименование
     descr = models.TextField(verbose_name=u'Сообщение')                         # Описание
@@ -70,7 +70,7 @@ class Task(models.Model):
     decision = models.TextField(verbose_name=u'Решение', blank=True, null=True) #опциональное поле для описания решения проблемы или ответа на вопрос
     #message_counter = models.IntegerField(default=0)  # Счётчик сообщений - в формах не отражается
     # 03.02.2013 Eisenhower's matrix
-    urgent_important = models.CharField(verbose_name='Важно-срочно', max_length=1, default='D', choices=URGENT_IMPORTANT)
+    urgent_important = models.CharField(verbose_name=u'Важно-срочно', max_length=1, default='D', choices=URGENT_IMPORTANT_MATRIX)
     # 03.02.2013
     category = models.ManyToManyField('TaskCategory', verbose_name='Категории', null=True, blank=True)
     
@@ -108,7 +108,8 @@ class Task(models.Model):
                     close_type_name = close_type[self.closing_type] 
                 except KeyError:
                     pass
-                return ('closed', u'ЗАКРЫТА: ' + close_type_name.decode('utf-8'))
+                #return ('closed', u'ЗАКРЫТА: ' + close_type_name.decode('utf-8'))
+                return ('closed', u'ЗАКРЫТА: ' + close_type_name)
             return ('closed', u'ЗАКРЫТА')
         # иначе - если не указана дата закрытия
         if self.ready_date:
@@ -196,7 +197,7 @@ class Task(models.Model):
     def dmy_ready_date(self):
         return Task.dmy_date(self.ready_date)
     def get_urgent_important(self):
-        return [val for key, val in dict(self.URGENT_IMPORTANT).iteritems() if key==self.urgent_important][0]
+        return [val for key, val in dict(self.URGENT_IMPORTANT_MATRIX).iteritems() if key==self.urgent_important][0]
 
         
 class Doc(models.Model):
