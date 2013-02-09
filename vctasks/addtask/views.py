@@ -673,6 +673,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                         'date_close':task.date_close,
                         'decision':task.decision,
                         'category':task.category.all(),
+                        'urgent_important':task.urgent_important
                         })
             elif is_customer:
                 form = TaskFormCustomer({'id':task_id,
@@ -698,6 +699,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                         'date_close':task.date_close,
                         'decision':task.decision,
                         'category':task.category.all(),
+                        'urgent_important':task.urgent_important
                         })
         else: 
             if is_manager:
@@ -757,9 +759,15 @@ def edit_task(request, ptask_id=None, **kwargs):
               if not is_customer:               
                   task.deadline = form.cleaned_data['deadline'] 
                   task.is_supervised = form.cleaned_data['is_supervised' ]
-              task.category.through.objects.all().delete()
-              for category in m.TaskCategory.objects.filter(pk__in=request.POST.getlist('category')):
-                task.category.add(category)
+                  task.urgent_important = form.cleaned_data['urgent_important']
+                  task.category = form.cleaned_data['category']
+                  task.save()
+                  #task.category.through.objects.all().delete()
+                  #for category in m.TaskCategory.objects.filter(pk__in=request.POST.getlist('category')):
+                  #  task.category.add(category)
+              else:
+                  task.urgent_important = 'D'
+                  task.save()
               # переход на форму прикрепления файлов
               return redirect('/addfile/?' + 'task_id=' + str(task.id) )
        else: return HttpResponse('Форма не айс!')
@@ -843,3 +851,4 @@ def home_page(request):
     
 
             
+
