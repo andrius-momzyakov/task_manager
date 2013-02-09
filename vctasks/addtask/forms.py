@@ -18,7 +18,8 @@ from django.forms import Form, ModelForm, Textarea, HiddenInput
 import settings
 
 class TaskFormManager(ModelForm):
-  is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
+  is_supervised = forms.ChoiceField(choices=(('N',u'Нет'),('Y',u'Да'),), required=True, initial='N' )
+  urgent_important = forms.ChoiceField(required=True, choices=m.Task.URGENT_IMPORTANT_MATRIX, initial='D')
   class Meta:
     model = m.Task
     fields = ('name', 'descr', 'urgent_important', 'date_open', 'start_date', 'applicant', 'module', \
@@ -26,7 +27,8 @@ class TaskFormManager(ModelForm):
               'proj', 'exe', 'closing_type', 'date_close', 'category')
     
 class TaskForm(ModelForm):    
-  is_supervised = forms.ChoiceField(choices=(('N','Нет'),('Y','Да'),), required=True, initial='N' )
+  is_supervised = forms.ChoiceField(choices=(('N',u'Нет'),('Y',u'Да'),), required=True, initial='N' )
+  urgent_important = forms.ChoiceField(required=True, choices=m.Task.URGENT_IMPORTANT_MATRIX, initial='D')
   class Meta:
     model = m.Task
     fields = ('name', 'descr', 'urgent_important', 'date_open', 'start_date', 'applicant', 'module', 'manager', \
