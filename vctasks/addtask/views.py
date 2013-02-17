@@ -679,7 +679,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                 form = TaskFormCustomer({'id':task_id,
                         'name':task.name,
                         'descr':task.descr})  
-            else:
+            else: #superuser
                 form = TaskForm({'id':task_id,
                         'name':task.name,
                         'descr':task.descr,
@@ -713,7 +713,7 @@ def edit_task(request, ptask_id=None, **kwargs):
            form = TaskFormManager(request.POST)
        elif is_customer:
            form = TaskFormCustomer(request.POST)
-       else:           
+       else: #superuser     
            form=TaskForm(request.POST)
        if form.is_valid():
               task = form.save(commit=False)
@@ -757,9 +757,7 @@ def edit_task(request, ptask_id=None, **kwargs):
                   task.date_close = date.today()
                
               if not is_customer:               
-                  task.deadline = form.cleaned_data['deadline'] 
-                  task.is_supervised = form.cleaned_data['is_supervised' ]
-                  task.urgent_important = form.cleaned_data['urgent_important']
+                  task.save()
                   task.category = form.cleaned_data['category']
                   task.save()
                   #task.category.through.objects.all().delete()
