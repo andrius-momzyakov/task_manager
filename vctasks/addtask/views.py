@@ -479,7 +479,8 @@ def common_tasklist(request, page_number=None, p_qs=None):
     c.update(curdate=cd ,status_name=status_name, status=status)
     response = HttpResponse(object_list(request, qs, paginate_by=10, page=p, \
             template_name=template_file, extra_context=c))
-    response.set_cookie('status', value=status)
+    if status!='filter':
+        response.set_cookie('status', value=status)
     return response
 
 @login_required
@@ -808,6 +809,8 @@ def search_form(request):
         if params[i][len(params[i])-1:]!='%':
           params[i] += '%'
       qs = m.Task.objects.extra(where=[search_string], params=params)
+      if not qs:
+        return redirect('/task_notfound/')
       return common_tasklist(request, None, qs)
   else: 
     form = TaskSearchForm()
@@ -859,6 +862,11 @@ def home_page(request):
                                         "message":'Указаны Неверные логин или пароль.'}, \
                           context_instance=RequestContext(request))
     return render_to_response("hello.html", {"curdate":CurDate()}, \
+                          context_instance=RequestContext(request))
+                          
+def task_notfound(request):
+    return render_to_response("error.html", {"curdate":CurDate(),
+                                        "message":'Данные не найдены.'}, \
                           context_instance=RequestContext(request))
     
 
