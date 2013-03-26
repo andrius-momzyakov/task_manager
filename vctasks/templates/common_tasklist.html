@@ -2,6 +2,20 @@
 
 {% block title %}HelpDesk-Список задач{% endblock %}
 {% block content %}
+<SCRIPT>
+function highlight(element_id){
+  var IE = "\v"=="v"
+  x = document.getElementById(element_id);
+
+  if (x.style.backgroundColor != "yellow") x.style.backgroundColor = "yellow";
+  else 
+    {if (!IE) x.style.backgroundColor = "inherit";
+     else x.style.backgroundColor = "transparent";
+    }  
+
+  
+}
+</script>
     <button onclick="parent.location='/tasklist/?status=None'">Все</button>
     <button onclick="parent.location='/tasklist/?status=new'">Новые</button>
     <button onclick="parent.location='/tasklist/?status=set'">Назначенные</button>
@@ -30,7 +44,9 @@
           <td>Модуль</td>
       </tr>
     {% for task in object_list %}
-      <tr>
+      <tr id="{{ task.id }}"  onmouseover="highlight({{ task.id }})" 
+                              onmouseout="highlight({{ task.id }})" 
+                              onclick="location.assign('/taskdetail/{{ task.id }}/?view=yes')">
         <td>{{ task.id }}</td>
         <td>{{ task.date_open|date:'d.m.Y'  }}</td>
         <td><a href="/taskdetail/{{ task.id }}/?view=yes">{{ task.name }}</a></td>
