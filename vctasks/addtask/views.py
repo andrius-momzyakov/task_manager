@@ -519,7 +519,8 @@ def common_tasklist(request, page_number=None):
 
     response.set_cookie('status', value=status)
     if status=='filter':
-        response.set_cookie('p_where', value=p_where)
+        import urllib
+        response.set_cookie('p_where', value=urllib.unquote(p_where).encode('utf-8'))
     return response
 
 @login_required
